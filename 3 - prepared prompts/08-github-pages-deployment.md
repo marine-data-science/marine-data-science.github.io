@@ -1,4 +1,4 @@
-# 07 - GitHub Pages Deployment
+# 08 - GitHub Pages Deployment
 
 ## Purpose
 

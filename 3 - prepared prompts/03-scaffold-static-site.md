@@ -1,4 +1,4 @@
-# 02 - Scaffold Static Site
+# 03 - Scaffold Static Site
 
 ## Purpose
 
@@ -16,12 +16,12 @@ Requirements:
 - Prefer Astro with TypeScript if it fits the repository and content.
 - Keep the existing prepared folders intact:
   - `1 - content/`
-  - `2- styling/`
-  - `3- prepared prompts/`
+  - `2 - styling/`
+  - `3 - prepared prompts/`
 - Do not move or rename the prepared content in this step.
 - Add only the minimal application structure needed to run and build the site.
 - Include a basic layout, a homepage route, and global styling tokens based on the design direction.
-- Use the logo asset from `2- styling/`.
+- Use the logo asset from `2 - styling/`.
 - Add scripts for local development and production build.
 
 Verification:

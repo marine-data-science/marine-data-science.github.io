@@ -1,4 +1,4 @@
-# 04 - Homepage First Slice
+# 05 - Homepage First Slice
 
 ## Purpose
 
@@ -12,8 +12,8 @@ The scope is intentionally one page: homepage, navigation, and a few real conten
 Please build the first visible website slice: the homepage and global navigation.
 
 Use:
-- `2- styling/design-direction.md` as the design brief.
-- `2- styling/Logo_MDS_1-3-Final_color.png` or the SVG logo if technically preferable.
+- `2 - styling/design-direction.md` as the design brief.
+- `2 - styling/Logo_MDS_1-3-Final_color.png` or the SVG logo if technically preferable.
 - Real content from `1 - content/`, especially Research, Projects, People, and Theses.
 
 Homepage goals:

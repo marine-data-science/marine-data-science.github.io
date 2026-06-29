@@ -1,4 +1,4 @@
-# 06 - Review, Polish, Accessibility
+# 07 - Review, Polish, Accessibility
 
 ## Purpose
 
@@ -17,7 +17,7 @@ Focus areas:
 - image alt text and stable image sizing
 - navigation clarity
 - text density and scanability
-- consistency with `2- styling/design-direction.md`
+- consistency with `2 - styling/design-direction.md`
 
 Constraints:
 - Keep changes focused and explainable.

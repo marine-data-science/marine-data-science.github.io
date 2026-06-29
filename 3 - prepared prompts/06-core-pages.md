@@ -1,4 +1,4 @@
-# 05 - Core Pages
+# 06 - Core Pages
 
 ## Purpose
 
