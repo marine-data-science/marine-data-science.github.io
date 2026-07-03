@@ -12,8 +12,8 @@ on:
       - "tsconfig.json"
       - "src/**"
       - "public/**"
-      - "1 - content/**"
-      - "2 - styling/**"
+      - "content/**"
+      - "docs/**"
 
 permissions:
   contents: read

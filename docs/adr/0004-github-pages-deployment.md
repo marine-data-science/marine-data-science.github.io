@@ -8,7 +8,7 @@ Accepted
 
 The site is a static Astro application intended for GitHub Pages. The repository is `marine-data-science/mds-website`, so the public URL is expected to live under the repository path rather than the organization root.
 
-The repository also contains source-only folders and demo planning prompts that must not be published as raw files.
+The repository contains source-only content and documentation folders that must not be published as raw files.
 
 ## Decision
 
@@ -36,4 +36,4 @@ Maintainers must enable GitHub Pages from GitHub Actions in the repository setti
 
 The generated site should publish at `https://marine-data-science.github.io/mds-website/` after the workflow runs successfully on `main`.
 
-Only processed static output is uploaded. Raw source-only folders, architecture docs, ADRs, and prepared prompts are not published unless a file is intentionally transformed into the generated Astro output.
+Only processed static output is uploaded. Raw source-only folders, architecture docs, and ADRs are not published unless a file is intentionally transformed into the generated Astro output.

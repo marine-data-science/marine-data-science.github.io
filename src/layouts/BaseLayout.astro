@@ -1,5 +1,4 @@
 ---
-import { styleAssetUrl } from "@lib/paths";
 import { withBasePath } from "@lib/site";
 import "@styles/global.css";
 
@@ -22,7 +21,7 @@ const nav: NavItem[] = [
   { href: withBasePath("/publications/"), label: "Publications" },
 ];
 
-const logo = styleAssetUrl("Logo_MDS_1-3-Final_color.svg");
+const logo = withBasePath("/brand/Logo_MDS_1-3-Final_color.svg");
 const homeHref = withBasePath("/");
 ---
 

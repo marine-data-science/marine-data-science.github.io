@@ -1,14 +1,25 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import PageIntro from "@components/PageIntro.astro";
-import { getThesisItems, groupThesisItems, sectionIntro } from "@lib/content";
+import Prose from "@components/Prose.astro";
+import { bodyForIndex, getIndex, getThesisItems, groupThesisItems, sectionIntro } from "@lib/content";
 
-const theses = getThesisItems();
+const index = await getIndex("theses");
+const theses = await getThesisItems();
 const thesisGroups = groupThesisItems(theses);
+const intro = await sectionIntro("theses");
+const title = index.data.title;
+const eyebrow = index.data.eyebrow ?? "For students";
+const body = bodyForIndex(index);
 ---
 
-<BaseLayout title="Theses" description={sectionIntro("theses")}>
-  <PageIntro eyebrow="For students" title="Bachelor and Master Theses" intro={sectionIntro("theses")} />
+<BaseLayout title={title} description={intro}>
+  <PageIntro eyebrow={eyebrow} title={title} intro={intro} />
+  {body && (
+    <section class="section overview-copy">
+      <Prose markdown={body} />
+    </section>
+  )}
   <section class="section">
     {
       thesisGroups.map((group) => (

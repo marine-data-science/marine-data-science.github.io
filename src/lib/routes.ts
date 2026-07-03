@@ -1,6 +1,6 @@
 import { withBasePath } from "./site";
 
-export type Section = "research" | "projects" | "people" | "theses";
+export type Section = "research" | "projects" | "people" | "theses" | "teaching";
 
 export function slugFromFileName(fileName: string): string {
   return fileName.replace(/\.mdx$/i, "");
@@ -39,11 +39,11 @@ const legacyRoutes = new Map<string, string>([
   ["/ultrasound", "/research/ultrasound/"],
   ["/ai4pumps", "/projects/ai4pumps/"],
   ["/data4sim", "/projects/data4sim/"],
-  ["/egoproject2026", "/projects/egoproject2026/"],
-  ["/ki-ubb-cluj-napoca", "/projects/ki-ubb-cluj-napoca/"],
-  ["/ml-micro", "/projects/ml-micro/"],
-  ["/mml", "/projects/mml/"],
-  ["/root", "/projects/root/"],
+  ["/egoproject2026", "/teaching/egoproject2026/"],
+  ["/ki-ubb-cluj-napoca", "/teaching/ki-ubb-cluj-napoca/"],
+  ["/ml-micro", "/research/ml-micro/"],
+  ["/mml", "/research/"],
+  ["/root", "/teaching/root/"],
   ["/show2instruct", "/projects/show2instruct/"],
   ["/anna", "/people/anna/"],
   ["/ashwin", "/people/ashwin/"],

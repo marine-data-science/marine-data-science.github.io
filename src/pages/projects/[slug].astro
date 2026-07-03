@@ -1,22 +1,32 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
+import ContentLink from "@components/ContentLink.astro";
+import MetadataRows from "@components/MetadataRows.astro";
 import PageIntro from "@components/PageIntro.astro";
-import Prose from "@components/Prose.astro";
-import { getEntries } from "@lib/content";
+import { render } from "astro:content";
+import { getEntries, hasLocalDetailPage, imageForEntry, metadataRowsForEntry, slugForEntry, summaryForEntry } from "@lib/content";
 
-export function getStaticPaths() {
-  return getEntries("projects").map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+export async function getStaticPaths() {
+  const entries = await getEntries("projects");
+  return entries.filter(hasLocalDetailPage).map((entry) => ({ params: { slug: slugForEntry(entry) }, props: { entry } }));
 }
 
 const { entry } = Astro.props;
+const { Content } = await render(entry);
+const image = imageForEntry(entry);
+const summary = summaryForEntry(entry);
+const rows = metadataRowsForEntry(entry);
 ---
 
-<BaseLayout title={entry.title} description={entry.summary}>
-  <PageIntro eyebrow="Project" title={entry.title} intro={entry.intro} />
+<BaseLayout title={entry.data.title} description={summary}>
+  <PageIntro eyebrow="Project" title={entry.data.title} intro={summary} />
   <section class="detail-shell">
     <article>
-      {entry.image && <img class="detail-image" src={entry.image.src} alt={entry.image.alt} />}
-      <Prose markdown={entry.bodyWithoutIntro} />
+      {image && <img class="detail-image" src={image.src} alt={image.alt} />}
+      <MetadataRows rows={rows} />
+      <div class="prose">
+        <Content components={{ a: ContentLink }} />
+      </div>
     </article>
   </section>
 </BaseLayout>

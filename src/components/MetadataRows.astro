@@ -1,0 +1,16 @@
+---
+const { rows = [] } = Astro.props;
+---
+
+{
+  rows.length > 0 && (
+    <dl class="metadata-rows">
+      {rows.map((row: { label: string; value: string }) => (
+        <>
+          <dt>{row.label}</dt>
+          <dd>{row.value}</dd>
+        </>
+      ))}
+    </dl>
+  )
+}

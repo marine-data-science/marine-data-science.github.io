@@ -13,30 +13,32 @@ This repository contains the source material and implementation workspace for a 
 
 ## Source Boundaries
 
-- Treat `1 - content/` as prepared source material for the website.
-- Treat `2 - styling/` as the visual direction and asset source for the website.
-- Treat `3 - prepared prompts/` as demo planning material. These files are not website content and must not become generated site pages.
-- Do not move or rename the prepared folders during the initial implementation.
+- Treat `content/` as the durable source material for the website.
+- Treat `content/README.md` as the editorial guide for non-developer content updates.
+- Treat `docs/design-direction.md` as the visual direction source of truth.
+- Treat `public/brand/` as the static logo and brand asset source used by the site.
+- The former demo prompt material has been removed and must not be recreated as routed or publishable website content.
 - Preserve content provenance where available, especially frontmatter such as `sourceUrl`.
-- Use `2 - styling/design-direction.md` as the source of truth for visual impression. Do not duplicate or reinvent the design brief unless an implementation conflict is discovered and documented.
+- Use `docs/design-direction.md` as the source of truth for visual impression. Do not duplicate or reinvent the design brief unless an implementation conflict is discovered and documented.
 
 ## Architecture Expectations
 
 - Prefer clean, maintainable architecture over throwaway demo code.
 - Separate content ingestion and normalization from visual rendering.
-- Use typed schemas or content collection definitions for structured content once the Astro scaffold exists.
+- Use Astro content collections and typed schemas for structured content.
 - Keep reusable UI components focused on stable concepts such as layout, navigation, cards, metadata rows, page shells, and contact sections.
 - Avoid hard-copying prepared content into components. Components should render content loaded from source files.
+- Do not use overview-page frontmatter arrays as item data. Item metadata belongs in each item MDX file.
 - Keep routes and navigation explicit and reviewable.
 
 ## Content Modeling Expectations
 
 - Model People, Research, Projects, and Theses as first-class content areas.
+- Model Teaching as an item collection when teaching material has its own source files.
 - Support overview and detail pages for complex entities where source material exists.
-- Support People entries that appear only on the overview page without inventing detail pages.
+- Support People entries that appear only on the overview page via `detailPage: false`, and support external profile links via URL-valued `detailPage`.
 - Keep Publications compact and year-grouped rather than forcing every publication into an individual MDX page.
 - Treat Theses as a hybrid area: a student-facing landing/list page plus individual detail pages for topics with full source files.
-- Start Teaching as a simple page; split it into a richer model only when the content requires it.
 
 ## Quality And Testing
 

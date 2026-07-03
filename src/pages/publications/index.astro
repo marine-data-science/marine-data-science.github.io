@@ -4,12 +4,12 @@ import PageIntro from "@components/PageIntro.astro";
 import Prose from "@components/Prose.astro";
 import { getIndex, getPublicationsByYear } from "@lib/content";
 
-const entry = getIndex("publications");
-const publications = getPublicationsByYear();
+const entry = await getIndex("publications");
+const publications = await getPublicationsByYear();
 ---
 
-<BaseLayout title={entry.title} description="Publications grouped by year.">
-  <PageIntro eyebrow="Publications" title="Publications" intro="Compact year-grouped list of publications." />
+<BaseLayout title={entry.data.title} description={entry.data.summary}>
+  <PageIntro eyebrow="Publications" title="Publications" intro={entry.data.summary} />
   <section class="publications">
     {
       publications.map((group) => (

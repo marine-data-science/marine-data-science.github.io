@@ -1,19 +1,26 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import PageIntro from "@components/PageIntro.astro";
+import CardGrid from "@components/CardGrid.astro";
 import Prose from "@components/Prose.astro";
-const teachingMarkdown = `## Semester Projects
+import { bodyForIndex, getIndex, getTeachingCards, sectionIntro } from "@lib/content";
 
-#### [Computer Vision for Spatial Understanding in Egocentric Data - Summer Semester 2026](/projects/egoproject2026/)
-
-#### [ArctiCode - Winter Semester 2025](https://klaraaorban.github.io/autonomous-shipping/)`;
+const index = await getIndex("teaching");
+const cards = await getTeachingCards();
+const intro = await sectionIntro("teaching");
+const title = index.data.title;
+const eyebrow = index.data.eyebrow ?? "Teaching";
+const body = bodyForIndex(index);
 ---
 
-<BaseLayout title="Teaching" description="Current teaching and semester project entry points.">
-  <PageIntro eyebrow="Teaching" title="Teaching" intro="Current teaching and semester project entry points." />
-  <section class="detail-shell">
-    <article>
-      <Prose markdown={teachingMarkdown} />
-    </article>
+<BaseLayout title={title} description={intro}>
+  <PageIntro eyebrow={eyebrow} title={title} intro={intro} />
+  {body && (
+    <section class="section overview-copy">
+      <Prose markdown={body} />
+    </section>
+  )}
+  <section class="section">
+    <CardGrid cards={cards} variant="roomy" />
   </section>
 </BaseLayout>

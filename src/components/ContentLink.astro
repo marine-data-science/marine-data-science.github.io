@@ -1,0 +1,11 @@
+---
+import { rewriteHref } from "@lib/routes";
+
+const { href, ...attributes } = Astro.props;
+const rewrittenHref = rewriteHref(href);
+const isExternal = /^https?:\/\//i.test(rewrittenHref);
+---
+
+<a href={rewrittenHref} target={isExternal ? "_blank" : undefined} rel={isExternal ? "noopener noreferrer" : undefined} {...attributes}>
+  <slot />
+</a>

@@ -2,13 +2,24 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import PageIntro from "@components/PageIntro.astro";
 import CardGrid from "@components/CardGrid.astro";
-import { getProjectCards, sectionIntro } from "@lib/content";
+import Prose from "@components/Prose.astro";
+import { bodyForIndex, getIndex, getProjectCards, sectionIntro } from "@lib/content";
 
-const cards = getProjectCards();
+const index = await getIndex("projects");
+const cards = await getProjectCards();
+const intro = await sectionIntro("projects");
+const title = index.data.title;
+const eyebrow = index.data.eyebrow ?? "Projects and cooperation";
+const body = bodyForIndex(index);
 ---
 
-<BaseLayout title="Projects" description={sectionIntro("projects")}>
-  <PageIntro eyebrow="Projects and cooperation" title="Projects" intro={sectionIntro("projects")} />
+<BaseLayout title={title} description={intro}>
+  <PageIntro eyebrow={eyebrow} title={title} intro={intro} />
+  {body && (
+    <section class="section overview-copy">
+      <Prose markdown={body} />
+    </section>
+  )}
   <section class="section">
     <CardGrid cards={cards} variant="roomy" />
   </section>

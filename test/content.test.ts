@@ -1,73 +1,135 @@
+import path from "node:path";
+import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { contentAssetUrl, PROMPTS_ROOT } from "../src/lib/paths";
+import matter from "gray-matter";
+import { CONTENT_ROOT, contentAssetUrl } from "../src/lib/paths";
 import {
-  getEntry,
+  bodyForIndex,
+  getIndex,
   getPeopleCards,
-  getPreviewCard,
   getProjectCards,
   getResearchCards,
+  getTeachingCards,
   getThesisItems,
   groupThesisItems,
+  hrefForDetailPage,
 } from "../src/lib/content";
 import { rewriteHref } from "../src/lib/routes";
 
-describe("content loading", () => {
-  it("uses corrected content titles directly from source files", () => {
-    const research = getResearchCards();
-    expect(research.some((card) => card.title.includes("Placment"))).toBe(false);
-    expect(research.some((card) => card.title === "Neural Processes for Optimal Sensor Placement")).toBe(true);
+describe("collection-backed overview content", () => {
+  it("builds research cards from research item files and explicit frontmatter tags", async () => {
+    const research = await getResearchCards();
+    const titles = research.map((card) => card.title);
+    const microbiome = research.find((card) => card.title === "Analyzing Microbiome Data using Machine Learning");
+    const probabilistic = research.find((card) => card.title === "Tractable Probabilistic Models");
+
+    expect(titles).toContain("Neural Processes for Optimal Sensor Placement");
+    expect(titles).toContain("Analyzing Microbiome Data using Machine Learning");
+    expect(titles).not.toContain("Marine Machine Learning");
+    expect(microbiome?.href).toBe("/research/ml-micro/");
+    expect(probabilistic?.meta).toBe("probabilistic inference / tractable models");
   });
 
-  it("uses the explicit preview teaser field for the homepage preview", () => {
-    const preview = getPreviewCard();
-    expect(preview.title).toBe("Neural Processes for Optimal Sensor Placement");
-    expect(preview.image?.src).toContain("Bildschirmfoto-vom-2025-05-02-11-04-19.png");
+  it("keeps projects limited to actual project files", async () => {
+    const projects = await getProjectCards();
+
+    expect(projects.map((project) => project.title)).toEqual(["Data4Sim", "AI4Pumps", "Show2Instruct"]);
+    expect(projects.find((project) => project.title === "Data4Sim")?.meta).toBe("BMWK · 01.10.2023 - 31.03.2026");
   });
 
-  it("keeps detail page intros untruncated", () => {
-    const entry = getEntry("research", "optimal-sensor-placement");
-    expect(entry?.summary).toHaveLength(220);
-    expect(entry?.intro).toContain("generate high-resolution maps");
-    expect(entry?.intro).toContain("which inputs most influence the results.");
-    expect(entry?.bodyWithoutIntro).not.toContain("These regression models can be used to generate high-resolution maps");
-    expect(entry?.bodyWithoutIntro).toContain("Specifically, we use **Neural Processes**");
+  it("builds teaching cards from teaching item files", async () => {
+    const teaching = await getTeachingCards();
+
+    expect(teaching.map((item) => item.title)).toEqual(["EgoProject 2026", "Artificial Intelligence (UBB Cluj-Napoca)", "RoOT"]);
+    expect(teaching[0]?.href).toBe("/teaching/egoproject2026/");
   });
 
-  it("keeps people without source files overview-only", () => {
-    const people = getPeopleCards();
+  it("reads people role and room from person frontmatter", async () => {
+    const people = await getPeopleCards();
     const jan = people.find((person) => person.title === "Jan Meischner");
     const stefan = people.find((person) => person.title === "Stefan Lüdtke");
+
+    expect(jan?.role).toBe("Research Coordinator");
+    expect(jan?.room).toBe("Room 211");
     expect(jan?.hasDetail).toBe(false);
     expect(stefan?.hasDetail).toBe(true);
   });
 
-  it("translates German project summaries for visible cards", () => {
-    const projects = getProjectCards();
-    const data4sim = projects.find((project) => project.title === "Data4Sim");
-    expect(data4sim?.summary).toContain("Sensor-based capture");
-    expect(data4sim?.summary).not.toContain("In diesem Projekt");
+  it("separates alumni from current people using person frontmatter", async () => {
+    const people = await getPeopleCards();
+    const clarissa = people.find((person) => person.title === "Clarissa Vock");
+
+    expect(clarissa?.alumni).toBe(true);
+    expect(clarissa?.hasDetail).toBe(false);
+    expect(people.filter((person) => person.alumni).map((person) => person.title)).toEqual(["Clarissa Vock"]);
   });
 
-  it("includes thesis detail files and inline source topics", () => {
-    const theses = getThesisItems();
+  it("groups thesis topics from individual thesis item files", async () => {
+    const theses = await getThesisItems();
+    const groups = groupThesisItems(theses);
+
     expect(theses.some((item) => item.href?.includes("transfer-learning-from-medical-ultrasound"))).toBe(true);
     expect(theses.some((item) => item.title.includes("phytoplankton"))).toBe(true);
+    expect(groups.map((group) => group.status)).toEqual(["Open", "Ongoing", "Finished"]);
   });
 
-  it("groups thesis topics by status from the theses index frontmatter", () => {
-    const groups = groupThesisItems(getThesisItems());
-    expect(groups.map((group) => group.status)).toEqual(["Open", "Ongoing", "Finished"]);
+  it("does not rely on overview frontmatter item arrays", async () => {
+    const overviewPages = ["research", "projects", "people", "theses", "teaching"].map((section) =>
+      matter(fs.readFileSync(path.join(CONTENT_ROOT, section, "index.mdx"), "utf8")),
+    );
+
+    expect(overviewPages.length).toBeGreaterThan(0);
+    expect(overviewPages.every((entry) => !("items" in entry.data))).toBe(true);
+  });
+
+  it("uses overview frontmatter for title, eyebrow, and summary while rendering markdown body separately", async () => {
+    const research = await getIndex("research");
+
+    expect(research.data.title).toBe("Research");
+    expect(research.data.eyebrow).toBe("Research topics");
+    expect(research.data.summary).toContain("Machine learning methods");
+    expect(bodyForIndex(research)).toContain("The Marine Data Science group works");
+    expect(bodyForIndex(research)).not.toContain("# Research");
+  });
+
+  it("uses home frontmatter to configure the homepage hero and collection sections", async () => {
+    const home = await getIndex("pages");
+
+    expect(home.data.title).toBe("Marine Data Science");
+    expect(home.data.eyebrow).toContain("University of Rostock");
+    expect(home.data.summary).toContain("machine learning");
+    expect(home.data.sections).toEqual([
+      { collection: "research", limit: 4 },
+      { collection: "projects", limit: 3 },
+      { collection: "people", limit: "all" },
+      { collection: "theses", limit: 4 },
+      { collection: "teaching", limit: 3 },
+    ]);
+    expect(bodyForIndex(home)).toContain("CORE Network");
   });
 });
 
 describe("routing and source boundaries", () => {
+  it("supports local, external, and overview-only detail page links", () => {
+    expect(hrefForDetailPage("people", "stefan-ludtke", true)).toBe("/people/stefan-ludtke/");
+    expect(hrefForDetailPage("people", "external-person", "https://example.com/profile")).toBe("https://example.com/profile");
+    expect(hrefForDetailPage("people", "jan-meischner", false)).toBeUndefined();
+  });
+
   it("rewrites legacy source links to current routes", () => {
-    expect(rewriteHref("/ml-micro")).toBe("/projects/ml-micro/");
+    expect(rewriteHref("/ml-micro")).toBe("/research/ml-micro/");
+    expect(rewriteHref("/egoproject2026")).toBe("/teaching/egoproject2026/");
     expect(rewriteHref("https://ash")).toBe("/people/ashwin/");
     expect(rewriteHref("/s/intro.pdf")).toBe("https://www.mds-lab.de/s/intro.pdf");
   });
 
   it("rejects content assets outside the content source boundary", () => {
-    expect(() => contentAssetUrl(PROMPTS_ROOT, "../3 - prepared prompts/README.md")).toThrow();
+    const sourceFile = path.join(CONTENT_ROOT, "research", "ml-micro.mdx");
+    expect(() => contentAssetUrl(sourceFile, "../../docs/architecture.md")).toThrow();
+  });
+
+  it("keeps obsolete demo and mml content out of active source files", () => {
+    expect(fs.existsSync(path.join(process.cwd(), "3 - prepared prompts"))).toBe(false);
+    expect(fs.existsSync(path.join(CONTENT_ROOT, "projects", "mml.mdx"))).toBe(false);
   });
 });

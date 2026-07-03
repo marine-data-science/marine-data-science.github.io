@@ -2,43 +2,120 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CardGrid from "@components/CardGrid.astro";
 import {
+  bodyForIndex,
   getIndex,
   getPeopleCards,
   getPreviewCard,
   getProjectCards,
   getResearchCards,
+  getTeachingCards,
   getThesisItems,
+  sectionHeader,
+  type Card,
+  type HomeSectionConfig,
+  type ItemSection,
+  type PersonCard,
+  type ThesisItem,
 } from "@lib/content";
+import { renderMarkdown } from "@lib/markdown";
 import { withBasePath } from "@lib/site";
 
-const home = getIndex("pages");
-const researchCards = getResearchCards();
-const projectCards = getProjectCards();
-const people = getPeopleCards();
-const theses = getThesisItems();
-const preview = getPreviewCard();
-const featuredResearch = researchCards.slice(0, 4);
-const featuredProjects = projectCards.slice(0, 3);
-const featuredPeople = people.slice(0, 4);
-const featuredTheses = theses.filter((item) => item.status !== "Finished").slice(0, 4);
-const researchHref = withBasePath("/research/");
-const projectsHref = withBasePath("/projects/");
-const peopleHref = withBasePath("/people/");
-const thesesHref = withBasePath("/theses/");
+const home = await getIndex("pages");
+const preview = await getPreviewCard();
+const defaultHomeSections: HomeSectionConfig[] = [
+  { collection: "research", limit: 4 },
+  { collection: "projects", limit: 3 },
+  { collection: "people", limit: 4 },
+  { collection: "theses", limit: 4 },
+  { collection: "teaching", limit: 3 },
+];
+const homeSections = await Promise.all(
+  (home.data.sections.length ? home.data.sections : defaultHomeSections).map(resolveHomeSection),
+);
+const homeBody = bodyForIndex(home);
+const homeBodyHtml = homeBody ? renderMarkdown(homeBody) : "";
+
+type ResolvedHomeSection = {
+  collection: ItemSection;
+  href: string;
+  title: string;
+  eyebrow?: string;
+  summary: string;
+  cards?: Card[];
+  people?: PersonCard[];
+  theses?: ThesisItem[];
+};
+
+async function resolveHomeSection(config: HomeSectionConfig): Promise<ResolvedHomeSection> {
+  const header = await sectionHeader(config.collection);
+  const href = withBasePath(`/${config.collection}/`);
+
+  if (config.collection === "people") {
+    const people = await getPeopleCards();
+    return {
+      collection: config.collection,
+      href,
+      ...header,
+      people: applyLimit(people.filter((person) => !person.alumni), config.limit),
+    };
+  }
+
+  if (config.collection === "theses") {
+    const theses = await getThesisItems();
+    return {
+      collection: config.collection,
+      href,
+      ...header,
+      theses: applyLimit(theses, config.limit),
+    };
+  }
+
+  const cards = await cardsForSection(config.collection);
+  return {
+    collection: config.collection,
+    href,
+    ...header,
+    cards: applyLimit(cards, config.limit),
+  };
+}
+
+async function cardsForSection(section: ItemSection): Promise<Card[]> {
+  if (section === "research") return getResearchCards();
+  if (section === "projects") return getProjectCards();
+  if (section === "teaching") return getTeachingCards();
+  return [];
+}
+
+function applyLimit<T>(items: T[], limit: HomeSectionConfig["limit"]): T[] {
+  if (limit === "all" || limit === undefined) {
+    return items;
+  }
+
+  return items.slice(0, limit);
+}
+
+function sectionCta(section: ItemSection): string {
+  if (section === "research") return "View all research";
+  if (section === "projects") return "View all projects";
+  if (section === "people") return "View all people";
+  if (section === "theses") return "View all thesis topics";
+  return "View teaching";
+}
+
+function cardVariant(section: ItemSection): "compact" | "roomy" {
+  return section === "projects" || section === "teaching" ? "roomy" : "compact";
+}
 ---
 
-<BaseLayout title="Marine Data Science" description={home.summary}>
+<BaseLayout title={home.data.title} description={home.data.summary}>
   <section class="hero">
     <div class="hero-inner">
       <div>
         <div class="accent-line" aria-hidden="true"></div>
-        <p class="eyebrow">University of Rostock · Institute for Visual and Analytic Computing</p>
-        <h1>Marine Data Science</h1>
-        <p class="hero-copy">
-          Research group working at the intersection of machine learning, marine data, sensor systems,
-          probabilistic modeling, and visual computing.
-        </p>
-        <p class="hero-support">Member of the CORE Network.</p>
+        {home.data.eyebrow && <p class="eyebrow">{home.data.eyebrow}</p>}
+        <h1>{home.data.title}</h1>
+        {home.data.summary && <p class="hero-copy">{home.data.summary}</p>}
+        {homeBodyHtml && <div class="hero-support" set:html={homeBodyHtml} />}
       </div>
       <aside class="preview-panel" aria-label="Selected research preview">
         {preview.image && <img src={preview.image.src} alt={preview.image.alt} />}
@@ -50,69 +127,63 @@ const thesesHref = withBasePath("/theses/");
     </div>
   </section>
 
-  <section class="section">
-    <div class="section-header">
-      <h2><a href={researchHref}>Research</a></h2>
-      <p>Research topics across marine data, machine learning, sensor systems, uncertainty, and visual computing.</p>
-    </div>
-    <CardGrid cards={featuredResearch} />
-    <p class="section-more"><a href={researchHref}>View all research</a></p>
-  </section>
-
-  <section class="section band">
-    <div class="section-inner">
-      <div class="section-header">
-        <h2><a href={projectsHref}>Projects</a></h2>
-        <p>Funded and applied projects connect research methods with logistics, industry, software interaction, teaching, and marine technology.</p>
-      </div>
-      <CardGrid cards={featuredProjects} variant="roomy" />
-      <p class="section-more"><a href={projectsHref}>View all projects</a></p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="section-header">
-      <h2><a href={peopleHref}>People</a></h2>
-      <p>Researchers, coordinators, engineers, and students working across machine learning, marine data science, and visual computing.</p>
-    </div>
-    <div class="people-list">
-      {
-        featuredPeople.map((person) => (
-          <article class="person-row">
-            {person.image && (person.href ? <a class="person-image-link" href={person.href}><img class="person-avatar" src={person.image.src} alt={person.image.alt} loading="lazy" /></a> : <img class="person-avatar" src={person.image.src} alt={person.image.alt} loading="lazy" />)}
-            <div>
-              <h3>{person.href ? <a href={person.href}>{person.title}</a> : person.title}</h3>
-              <p>{person.summary}</p>
-              {person.href && <p class="micro-note"><a href={person.href}>More info</a></p>}
+  {
+    homeSections.map((section, index) => {
+      if (section.collection === "theses") {
+        return (
+          <section class="theses-feature">
+            <div class="theses-panel">
+              <div>
+                {section.eyebrow && <p class="eyebrow">{section.eyebrow}</p>}
+                <h2><a href={section.href}>{section.title}</a></h2>
+                <p class="hero-support">{section.summary}</p>
+              </div>
+              <div class="thesis-list">
+                {
+                  section.theses?.map((item) => (
+                    <article class="thesis-item">
+                      <span class="status">{item.status}</span>
+                      <h3>{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
+                      {item.description && <p>{item.description}</p>}
+                    </article>
+                  ))
+                }
+              </div>
+              <p class="section-more theses-more"><a href={section.href}>{sectionCta(section.collection)}</a></p>
             </div>
-          </article>
-        ))
+          </section>
+        );
       }
-    </div>
-    <p class="section-more"><a href={peopleHref}>View all people</a></p>
-  </section>
 
-  <section class="theses-feature">
-    <div class="theses-panel">
-      <div>
-        <p class="eyebrow">For students</p>
-        <h2><a href={thesesHref}>Bachelor and Master Theses</a></h2>
-        <p class="hero-support">
-          We are always looking for motivated students. Open topics are listed, and students can also propose topics in the group's research areas.
-        </p>
-      </div>
-      <div class="thesis-list">
-        {
-          featuredTheses.map((item) => (
-            <article class="thesis-item">
-              <span class="status">{item.status}</span>
-              <h3>{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
-              {item.description && <p>{item.description}</p>}
-            </article>
-          ))
-        }
-      </div>
-      <p class="section-more theses-more"><a href={thesesHref}>View all thesis topics</a></p>
-    </div>
-  </section>
+      return (
+        <section class:list={["section", index % 2 === 1 && "band"]}>
+          <div class={index % 2 === 1 ? "section-inner" : undefined}>
+            <div class="section-header">
+              <h2><a href={section.href}>{section.title}</a></h2>
+              <p>{section.summary}</p>
+            </div>
+            {section.collection === "people" ? (
+              <div class="people-list">
+                {
+                  section.people?.map((person) => (
+                    <article class="person-row">
+                      {person.image && (person.href ? <a class="person-image-link" href={person.href}><img class="person-avatar" src={person.image.src} alt={person.image.alt} loading="lazy" /></a> : <img class="person-avatar" src={person.image.src} alt={person.image.alt} loading="lazy" />)}
+                      <div>
+                        <h3>{person.href ? <a href={person.href}>{person.title}</a> : person.title}</h3>
+                        <p>{person.summary}</p>
+                        {person.href && <p class="micro-note"><a href={person.href}>More info</a></p>}
+                      </div>
+                    </article>
+                  ))
+                }
+              </div>
+            ) : (
+              <CardGrid cards={section.cards ?? []} variant={cardVariant(section.collection)} />
+            )}
+            <p class="section-more"><a href={section.href}>{sectionCta(section.collection)}</a></p>
+          </div>
+        </section>
+      );
+    })
+  }
 </BaseLayout>

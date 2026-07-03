@@ -1,58 +1,71 @@
 # Architecture Overview
 
-This document describes the intended architecture for the Marine Data Science static website.
+This document describes the current architecture of the Marine Data Science static website.
 
 ## Static Site Approach
 
-The site should be implemented as a static Astro application with TypeScript and MDX/content collections. The generated output must be suitable for GitHub Pages deployment.
+The site is an Astro application with TypeScript, MDX, and Astro content collections. It builds to static files that can be deployed to GitHub Pages.
 
-The default architecture should avoid unnecessary client-side JavaScript. Interactive behavior can be added later only when it improves a concrete user workflow and still works well on a static host.
+The default architecture avoids unnecessary client-side JavaScript. Interactive behavior should only be added when it improves a concrete user workflow and still works well on a static host.
 
 ## Deployment
 
-Production deployment uses GitHub Pages from the static Astro build output in `dist/`. The GitHub Actions workflow at `.github/workflows/deploy-pages.yml` runs only for pushes to `main` that affect site source, styling assets, package/config files, or the workflow itself.
+Production deployment uses GitHub Pages from the static Astro build output in `dist/`. The GitHub Actions workflow at `.github/workflows/deploy-pages.yml` runs for pushes to `main` that affect site source, content, docs, package/config files, or the workflow itself.
 
 Astro is configured with `site: "https://marine-data-science.github.io"` and `base: "/mds-website"` for repository-based Pages hosting at `https://marine-data-science.github.io/mds-website/`. Internal routes and local asset URLs must pass through the shared base-path helper so links continue to work under the repository path.
 
-The Pages artifact must remain the generated `dist/` directory. Source-only folders such as `1 - content/`, `2 - styling/`, `docs/`, and `3 - prepared prompts/` must not be uploaded directly; only processed content and assets that are part of the generated Astro output are published.
+The Pages artifact must remain the generated `dist/` directory. Source folders such as `content/` and `docs/` are not uploaded directly; only processed site output and static files under `public/` are published.
 
 Maintainers must configure the GitHub repository under Settings -> Pages -> Build and deployment -> Source: GitHub Actions before the workflow can publish the site.
 
 ## Source Inputs
 
-- `1 - content/` contains prepared MDX content and local content assets.
-- `2 - styling/` contains the visual direction and logo assets.
-- `3 - prepared prompts/` contains demo workflow notes and must not be routed or published as website content.
+- `content/` contains website MDX content, local content assets, and the editorial guide for content maintainers.
+- `content/README.md` is the first document to read when adding or updating people, research topics, projects, teaching items, or thesis topics.
+- `docs/design-direction.md` contains the visual direction for the site.
+- `docs/design-assets/` contains design source files that are useful for reference but are not loaded by the website.
+- `public/brand/` contains static logo assets used by the layout.
+- `docs/adr/` contains architectural decision records.
 
-The implementation should preserve the prepared source folders and read from them rather than moving or duplicating the material into component files.
+The former demo prompt material has been removed. It is not a website source and must not be restored as routed content or deployed output.
 
 ## Content Layer
 
-The content layer should load and validate source material before rendering. Use typed Astro content collections or equivalent TypeScript helpers once the scaffold exists.
+Structured content is defined in `src/content.config.ts` using Astro content collections.
 
-The content layer is responsible for:
+The content model uses item files as the source of truth:
 
-- preserving source provenance such as `sourceUrl`
-- resolving local image references from `1 - content/assets/`
-- exposing structured data for overview pages
-- supporting detail pages where source files exist
-- documenting source inconsistencies rather than hiding them
+- Overview pages such as `content/research/index.mdx` provide page-level metadata and copy only. `title`, `eyebrow`, and `summary` come from frontmatter; the Markdown body is rendered below the page introduction.
+- Item files such as `content/research/ml-micro.mdx` provide title, summary, image, tags, and detail-page behavior for that item.
+- Overview pages must not contain frontmatter arrays of item data.
+- The homepage is configured by `content/pages/home.mdx`. Its `title`, `eyebrow`, and `summary` control the hero. Its optional `sections` array controls which collections appear on the homepage, in which order, and with which item limit. Section titles and descriptions still come from the matching collection overview files.
+
+There are two different overview mechanisms:
+
+- Collection overview routes such as `/research/`, `/projects/`, `/people/`, `/teaching/`, and `/theses/` load their own `content/<collection>/index.mdx` for page-level copy, then list item files from the same collection.
+- The homepage loads `content/pages/home.mdx` for the hero and uses `home.mdx.sections` as a composition list. Each section entry points to a collection and may set `limit` to a number or `all`. The homepage then loads section title and description from that collection's `index.mdx` and item cards from the collection entries.
+
+The `sections` array is intentionally not an item-data array. It contains only collection references and display limits. Item metadata must remain in the item MDX files.
+
+The content helper in `src/lib/content.ts` loads entries from Astro collections, sorts them by `order`, resolves local content assets, and prepares view models for overview cards and detail pages.
 
 ## Rendering Layer
 
-The rendering layer should use reusable Astro components for common page patterns:
+Reusable Astro components handle common page patterns:
 
 - global layout and navigation
-- page shells and section headers
-- cards for people, research topics, projects, and thesis topics
-- metadata rows for roles, contacts, funding, duration, publications, and source links
-- contact and related-content sections
+- page introductions
+- cards for research topics, projects, teaching items, and previews
+- people rows
+- thesis topic rows
+- metadata rows on detail pages
+- prose rendering for MDX bodies and publication lists
 
-Rendering components should receive prepared content data. They should not contain hand-copied page content.
+Rendering components receive prepared content data. They should not contain hand-copied page content.
 
 ## Core Pages
 
-The initial site should include:
+The site includes:
 
 - Home
 - Research
@@ -62,17 +75,17 @@ The initial site should include:
 - Teaching
 - Publications
 
-Research, Projects, People, and Theses are the priority areas because they best serve the two main audiences: students seeking entry points and external visitors seeking expertise or cooperation partners.
+Research, Projects, People, Theses, and Teaching are collection-backed content areas. Publications remain a compact year-grouped page.
 
 ## Content Area Behavior
 
-- People: overview cards for all listed members, with detail pages only where individual profile files exist.
-- Research: overview cards and detail pages for research topic files.
-- Projects: overview cards and detail pages for project files.
-- Theses: hybrid student-facing landing page with grouped topics and detail pages for topics that have full files.
-- Teaching: simple page at first, because current source material is compact.
-- Publications: compact year-grouped page; do not create one page per publication for the demo.
+- People: one MDX file per person. `detailPage: true` creates a local profile page, `detailPage: false` keeps the person overview-only, and an external URL links to an external profile. `alumni: true` moves a person into the Alumni list below current members.
+- Research: one MDX file per research topic. Tags and summaries come from the topic frontmatter.
+- Projects: only active project files are listed. Funding, duration, partners, and contacts live in the project frontmatter.
+- Teaching: semester projects, teaching material, and summer schools are item files under `content/teaching/`.
+- Theses: every topic is an item file. Topics with full text use `detailPage: true`; list-only topics use `detailPage: false`.
+- Publications: grouped by year from `content/publications/index.mdx`; no individual publication pages are generated.
 
 ## Quality Bar
 
-The codebase should be clean enough to continue after the demo. Prefer small, typed, testable helpers over one-off parsing embedded in components. Add tests for content loading, schema validation, route derivation, and other logic where regressions are plausible.
+Keep the codebase maintainable enough to continue beyond the demo. Prefer typed, testable helpers over one-off parsing embedded in components. Add tests for content loading, schema validation, route derivation, and source-boundary behavior where regressions are plausible.
