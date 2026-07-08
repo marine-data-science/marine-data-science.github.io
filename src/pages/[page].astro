@@ -1,0 +1,37 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import ContentLink from "@components/ContentLink.astro";
+import PageIntro from "@components/PageIntro.astro";
+import { render } from "astro:content";
+import {
+  getStandalonePages,
+  pageSlugForEntry,
+  summaryForEntry,
+} from "@lib/content";
+
+export async function getStaticPaths() {
+  const pages = await getStandalonePages();
+
+  return pages.map((entry) => ({
+    params: { page: pageSlugForEntry(entry) },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const summary = summaryForEntry(entry);
+---
+
+<BaseLayout title={entry.data.title} description={summary}>
+  <PageIntro
+    eyebrow={entry.data.eyebrow ?? "Marine Data Science"}
+    title={entry.data.title}
+    intro={summary}
+  />
+  <section class="detail-shell">
+    <article class="prose">
+      <Content components={{ a: ContentLink }} />
+    </article>
+  </section>
+</BaseLayout>

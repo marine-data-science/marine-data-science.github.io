@@ -30,6 +30,8 @@ The homepage is a special page at `content/pages/home.mdx`. Its frontmatter cont
 
 People and thesis topics can be overview-only with `detailPage: false`. People can also use an external profile link by setting `detailPage` to an absolute URL. Former members are represented with `alumni: true` in their person file.
 
+Thesis `status` remains the source for grouping topics into `Open`, `Ongoing`, and `Finished` sections. Thesis teaser pills are driven by `keywords` so the visible teaser metadata adds topical context instead of repeating the section status.
+
 ## Consequences
 
 Adding or updating content usually means editing one MDX file in `content/`.

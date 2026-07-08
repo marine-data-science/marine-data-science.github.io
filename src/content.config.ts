@@ -89,6 +89,7 @@ const theses = defineCollection({
   schema: baseSchema.extend({
     detailPage: detailPageSchema.optional().default(true),
     status: z.enum(["Open", "Ongoing", "Finished"]),
+    keywords: z.array(z.string()).optional().default([]),
     degree: z.string().optional(),
     supervisors: z.array(z.string()).optional().default([]),
     skills: z.array(z.string()).optional().default([]),

@@ -39,6 +39,7 @@ The content model uses item files as the source of truth:
 - Item files such as `content/research/ml-micro.mdx` provide title, summary, image, tags, and detail-page behavior for that item.
 - Overview pages must not contain frontmatter arrays of item data.
 - The homepage is configured by `content/pages/home.mdx`. Its `title`, `eyebrow`, and `summary` control the hero. Its optional `sections` array controls which collections appear on the homepage, in which order, and with which item limit. Section titles and descriptions still come from the matching collection overview files.
+- Other files in `content/pages/` are standalone Markdown-backed pages. They are rendered at `/<filename>/`, but they are not added to the main navigation or any overview automatically. Use them for stable, externally linked landing pages such as partner or network entry points.
 
 There are two different overview mechanisms:
 
@@ -77,13 +78,15 @@ The site includes:
 
 Research, Projects, People, Theses, and Teaching are collection-backed content areas. Publications remain a compact year-grouped page.
 
+Standalone pages from `content/pages/*.mdx`, except `home.mdx`, may also be published for explicit external links. They are intentionally outside the top-level navigation unless the navigation is changed by hand.
+
 ## Content Area Behavior
 
 - People: one MDX file per person. `detailPage: true` creates a local profile page, `detailPage: false` keeps the person overview-only, and an external URL links to an external profile. `alumni: true` moves a person into the Alumni list below current members.
 - Research: one MDX file per research topic. Tags and summaries come from the topic frontmatter.
 - Projects: only active project files are listed. Funding, duration, partners, and contacts live in the project frontmatter.
 - Teaching: semester projects, teaching material, and summer schools are item files under `content/teaching/`.
-- Theses: every topic is an item file. Topics with full text use `detailPage: true`; list-only topics use `detailPage: false`.
+- Theses: every topic is an item file. Topics with full text use `detailPage: true`; list-only topics use `detailPage: false`. `status` groups topics on the Theses overview, while `keywords` provide the blue teaser pills.
 - Publications: grouped by year from `content/publications/index.mdx`; no individual publication pages are generated.
 
 ## Quality Bar

@@ -9,10 +9,12 @@ import {
   getPeopleCards,
   getProjectCards,
   getResearchCards,
+  getStandalonePages,
   getTeachingCards,
   getThesisItems,
   groupThesisItems,
   hrefForDetailPage,
+  pageSlugForEntry,
 } from "../src/lib/content";
 import { rewriteHref } from "../src/lib/routes";
 
@@ -71,6 +73,11 @@ describe("collection-backed overview content", () => {
     expect(theses.some((item) => item.href?.includes("transfer-learning-from-medical-ultrasound"))).toBe(true);
     expect(theses.some((item) => item.title.includes("phytoplankton"))).toBe(true);
     expect(groups.map((group) => group.status)).toEqual(["Open", "Ongoing", "Finished"]);
+    expect(theses.find((item) => item.title.includes("TabPFN"))?.keywords).toEqual([
+      "metabarcoding",
+      "TabPFN",
+      "tabular data",
+    ]);
   });
 
   it("does not rely on overview frontmatter item arrays", async () => {
@@ -106,6 +113,14 @@ describe("collection-backed overview content", () => {
       { collection: "people", limit: "all" },
     ]);
     expect(bodyForIndex(home)).toContain("CORE Network");
+  });
+
+  it("renders standalone pages from content/pages without treating the homepage as a standalone route", async () => {
+    const pages = await getStandalonePages();
+
+    expect(pages.map(pageSlugForEntry)).toContain("core-network");
+    expect(pages.map(pageSlugForEntry)).not.toContain("home");
+    expect(pages.find((page) => pageSlugForEntry(page) === "core-network")?.data.title).toBe("CORE Network");
   });
 });
 

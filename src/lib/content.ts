@@ -38,6 +38,8 @@ type PageEntry = {
   body: string;
 };
 
+export type StandalonePageEntry = CollectionEntry<"pages">;
+
 export type ImageRef = {
   src: string;
   alt: string;
@@ -63,6 +65,7 @@ export type ThesisItem = {
   href?: string;
   description?: string;
   status: "Open" | "Ongoing" | "Finished";
+  keywords: string[];
 };
 
 export type MetadataRow = {
@@ -110,6 +113,22 @@ export async function getIndex(section: PageSection): Promise<PageEntry> {
   };
 }
 
+export async function getStandalonePages(): Promise<StandalonePageEntry[]> {
+  const entries = (await getCollection("pages")) as StandalonePageEntry[];
+
+  return entries
+    .filter((entry) => entry.id.startsWith("pages/"))
+    .filter((entry) => pageSlugForEntry(entry) !== "home")
+    .sort(
+      (a, b) =>
+        a.data.order - b.data.order || a.data.title.localeCompare(b.data.title),
+    );
+}
+
+export function pageSlugForEntry(entry: StandalonePageEntry): string {
+  return slugFromFileName(path.basename(withMdxExtension(entry.id)));
+}
+
 export async function getEntries(section: ItemSection): Promise<ItemEntry[]> {
   const entries = ((await getCollection(section)) as ItemEntry[]).filter(
     (entry) => slugForEntry(entry) !== "index",
@@ -154,7 +173,9 @@ export function imageForEntry(
   };
 }
 
-export function summaryForEntry(entry: ItemEntry | PageEntry): string {
+export function summaryForEntry(
+  entry: ItemEntry | PageEntry | StandalonePageEntry,
+): string {
   const summary = entry.data.summary?.trim();
   if (summary) {
     return summary;
@@ -229,6 +250,7 @@ export async function getThesisItems(): Promise<ThesisItem[]> {
     href: hrefForEntry("theses", entry),
     description: summaryForEntry(entry),
     status: entry.data.status,
+    keywords: entry.data.keywords,
   }));
 }
 
@@ -349,6 +371,7 @@ export function metadataRowsForEntry(entry: ItemEntry): MetadataRow[] {
 
   return compactRows([
     ["Status", entry.data.status],
+    ["Keywords", entry.data.keywords.join(", ")],
     ["Degree", entry.data.degree],
     ["Supervisors", entry.data.supervisors.join(", ")],
     ["Skills", entry.data.skills.join(", ")],

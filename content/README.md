@@ -137,6 +137,36 @@ What `home.mdx` does not control:
 
 Example: if you want the homepage to show Teaching before Projects, move the `teaching` block above the `projects` block in `sections`. If you want to change the Teaching headline or description, edit `content/teaching/index.mdx`.
 
+## Standalone Pages
+
+Standalone Markdown pages live in `content/pages/` next to `home.mdx`.
+
+Use them for pages that should have a stable URL but should not appear automatically in the main navigation or on an overview page, for example partner-specific landing pages:
+
+```text
+content/pages/core-network.mdx
+```
+
+This creates:
+
+```text
+/core-network/
+```
+
+Use normal frontmatter and Markdown:
+
+```mdx
+---
+title: CORE Network
+eyebrow: Cooperation
+summary: A landing page for visitors arriving from the CORE Network.
+---
+
+Page text goes here.
+```
+
+The main navigation is maintained in `src/layouts/BaseLayout.astro`. Creating a standalone page does not add it there.
+
 ## Images
 
 Put images under `content/assets/`, ideally grouped by category and item:
@@ -376,6 +406,9 @@ summary: Short summary for the thesis list.
 order: 40
 detailPage: true
 status: Open
+keywords:
+  - computer vision
+  - marine data
 degree: Bachelor or Master
 supervisors:
   - Jane Doe
@@ -423,9 +456,12 @@ Optional fields:
 - `imageAlt`
 - `order`
 - `degree`
+- `keywords`
 - `supervisors`
 - `skills`
 - `contact`
+
+Use `status` only for grouping topics into `Open`, `Ongoing`, and `Finished` sections. Use `keywords` for the blue pills shown in thesis teasers.
 
 ## Before You Commit
 

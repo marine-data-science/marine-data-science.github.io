@@ -142,7 +142,11 @@ function cardVariant(section: ItemSection): "compact" | "roomy" {
                 {
                   section.theses?.map((item) => (
                     <article class="thesis-item">
-                      <span class="status">{item.status}</span>
+                      {item.keywords.length > 0 && (
+                        <ul class="keyword-list" aria-label="Keywords">
+                          {item.keywords.map((keyword) => <li>{keyword}</li>)}
+                        </ul>
+                      )}
                       <h3>{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
                       {item.description && <p>{item.description}</p>}
                     </article>
