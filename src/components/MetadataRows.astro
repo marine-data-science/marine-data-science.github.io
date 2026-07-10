@@ -1,14 +1,23 @@
 ---
+import type { MetadataRow } from "@lib/content";
+
 const { rows = [] } = Astro.props;
 ---
 
 {
   rows.length > 0 && (
     <dl class="metadata-rows">
-      {rows.map((row: { label: string; value: string }) => (
+      {rows.map((row: MetadataRow) => (
         <>
           <dt>{row.label}</dt>
-          <dd>{row.value}</dd>
+          <dd>
+            {row.values.map((value, index) => (
+              <>
+                {index > 0 && <span class="metadata-separator">, </span>}
+                {value.href ? <a href={value.href}>{value.label}</a> : value.label}
+              </>
+            ))}
+          </dd>
         </>
       ))}
     </dl>

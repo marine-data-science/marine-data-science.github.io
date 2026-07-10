@@ -71,6 +71,17 @@ export type ThesisItem = {
 export type MetadataRow = {
   label: string;
   value: string;
+  values: MetadataValue[];
+};
+
+export type MetadataValue = {
+  label: string;
+  href?: string;
+};
+
+export type RelatedContentGroup = {
+  title: string;
+  items: Card[];
 };
 
 const defaultSectionIntroductions: Record<ItemSection, string> = {
@@ -268,6 +279,23 @@ export function groupThesisItems(
     .filter((group) => group.items.length > 0);
 }
 
+export function selectHomepageThesisItems(
+  items: ThesisItem[],
+  targetCount: number | "all" | undefined,
+): ThesisItem[] {
+  const visibleItems = items.filter((item) => item.status !== "Finished");
+
+  if (targetCount === "all" || targetCount === undefined) {
+    return visibleItems;
+  }
+
+  const openItems = visibleItems.filter((item) => item.status === "Open");
+  const ongoingItems = visibleItems.filter((item) => item.status === "Ongoing");
+  const count = Math.max(openItems.length, targetCount);
+
+  return [...openItems, ...ongoingItems].slice(0, count);
+}
+
 export async function getPreviewCard(): Promise<Card> {
   const sections: ItemSection[] = [
     "research",
@@ -336,7 +364,9 @@ export function hasLocalDetailPage(entry: ItemEntry): boolean {
   );
 }
 
-export function metadataRowsForEntry(entry: ItemEntry): MetadataRow[] {
+export async function metadataRowsForEntry(entry: ItemEntry): Promise<MetadataRow[]> {
+  const people = await getPeopleLinkIndex();
+
   if (entry.collection === "people") {
     return compactRows([
       ["Role", entry.data.role],
@@ -349,7 +379,7 @@ export function metadataRowsForEntry(entry: ItemEntry): MetadataRow[] {
   if (entry.collection === "research") {
     return compactRows([
       ["Tags", entry.data.tags.join(", ")],
-      ["Contact", entry.data.contact],
+      linkedPeopleRow("Contact", entry.data.contact, people),
     ]);
   }
 
@@ -358,7 +388,7 @@ export function metadataRowsForEntry(entry: ItemEntry): MetadataRow[] {
       ["Funding", entry.data.funding],
       ["Duration", entry.data.duration],
       ["Partners", entry.data.partners.join(", ")],
-      ["Contact", entry.data.contact],
+      linkedPeopleRow("Contact", entry.data.contact, people),
     ]);
   }
 
@@ -375,10 +405,57 @@ export function metadataRowsForEntry(entry: ItemEntry): MetadataRow[] {
     ["Status", entry.data.status],
     ["Keywords", entry.data.keywords.join(", ")],
     ["Degree", entry.data.degree],
-    ["Supervisors", entry.data.supervisors.join(", ")],
+    linkedPeopleRow("Supervisors", entry.data.supervisors, people),
     ["Skills", entry.data.skills.join(", ")],
-    ["Contact", entry.data.contact],
+    linkedPeopleRow("Contact", entry.data.contact, people),
   ]);
+}
+
+export async function getRelatedContentForPerson(
+  person: ItemEntry,
+): Promise<RelatedContentGroup[]> {
+  if (person.collection !== "people") {
+    return [];
+  }
+
+  const name = person.data.title;
+  const groups: RelatedContentGroup[] = [];
+
+  const research = (await getEntries("research")) as CollectionEntry<"research">[];
+  const researchItems = research
+    .filter((entry) => namesContainPerson(entry.data.contact, name))
+    .map((entry) => cardForEntry("research", entry, entry.data.tags.join(" / ")));
+  if (researchItems.length > 0) {
+    groups.push({ title: "Research Topics", items: researchItems });
+  }
+
+  const projects = (await getEntries("projects")) as CollectionEntry<"projects">[];
+  const projectItems = projects
+    .filter((entry) => namesContainPerson(entry.data.contact, name))
+    .map((entry) =>
+      cardForEntry(
+        "projects",
+        entry,
+        [entry.data.funding, entry.data.duration].filter(Boolean).join(" · "),
+      ),
+    );
+  if (projectItems.length > 0) {
+    groups.push({ title: "Projects", items: projectItems });
+  }
+
+  const theses = (await getEntries("theses")) as CollectionEntry<"theses">[];
+  const thesisItems = theses
+    .filter(
+      (entry) =>
+        namesContainPerson(entry.data.supervisors, name) ||
+        namesContainPerson(entry.data.contact, name),
+    )
+    .map((entry) => cardForEntry("theses", entry, entry.data.status));
+  if (thesisItems.length > 0) {
+    groups.push({ title: "Thesis Topics", items: thesisItems });
+  }
+
+  return groups;
 }
 
 export async function getPublicationsByYear(): Promise<
@@ -460,10 +537,84 @@ function isItemSection(value: unknown): value is ItemSection {
   );
 }
 
-function compactRows(rows: [string, string | undefined][]): MetadataRow[] {
+function compactRows(
+  rows: ([string, string | undefined] | MetadataRow | undefined)[],
+): MetadataRow[] {
   return rows
-    .filter((row): row is [string, string] => Boolean(row[1]?.trim()))
-    .map(([label, value]) => ({ label, value }));
+    .filter((row): row is [string, string] | MetadataRow => {
+      if (!row) return false;
+      if (Array.isArray(row)) return Boolean(row[1]?.trim());
+      return row.values.length > 0;
+    })
+    .map((row) => {
+      if (!Array.isArray(row)) {
+        return row;
+      }
+
+      const [label, value] = row;
+      return textRow(label, value);
+    });
+}
+
+function textRow(label: string, value: string): MetadataRow {
+  return {
+    label,
+    value,
+    values: [{ label: value }],
+  };
+}
+
+function linkedPeopleRow(
+  label: string,
+  value: string | string[] | undefined,
+  people: Map<string, MetadataValue>,
+): MetadataRow | undefined {
+  const names = personNames(value);
+  if (names.length === 0) {
+    return undefined;
+  }
+
+  const values = names.map((name) => people.get(normalizePersonName(name)) ?? { label: name });
+  return {
+    label,
+    value: values.map((item) => item.label).join(", "),
+    values,
+  };
+}
+
+async function getPeopleLinkIndex(): Promise<Map<string, MetadataValue>> {
+  const entries = (await getEntries("people")) as CollectionEntry<"people">[];
+  return new Map(
+    entries.map((entry) => [
+      normalizePersonName(entry.data.title),
+      {
+        label: entry.data.title,
+        href: hrefForEntry("people", entry),
+      },
+    ]),
+  );
+}
+
+function namesContainPerson(value: string | string[] | undefined, name: string): boolean {
+  const normalizedName = normalizePersonName(name);
+  return personNames(value).some((candidate) => normalizePersonName(candidate) === normalizedName);
+}
+
+function personNames(value: string | string[] | undefined): string[] {
+  if (!value) {
+    return [];
+  }
+
+  const values = Array.isArray(value) ? value : value.split(";");
+  return values.map((item) => item.trim()).filter(Boolean);
+}
+
+function normalizePersonName(value: string): string {
+  return value
+    .trim()
+    .toLocaleLowerCase("en")
+    .replace(/[\u2018\u2019\u02bc`]/g, "'")
+    .replace(/\s+/g, " ");
 }
 
 function firstContentParagraph(body: string): string | undefined {
