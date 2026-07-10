@@ -89,6 +89,8 @@ Standalone pages from `content/pages/*.mdx`, except `home.mdx`, may also be publ
 - Theses: every topic is an item file. Topics with full text use `detailPage: true`; list-only topics use `detailPage: false`. `status` groups topics on the Theses overview, while `keywords` provide the blue teaser pills.
 - Publications: grouped by year from `content/publications/index.mdx`; no individual publication pages are generated.
 
+Person names in `contact` and thesis `supervisors` fields are plain editorial strings. During rendering, matching names are resolved against `content/people/` and linked to the person's local detail page or external `detailPage` URL. Local person detail pages also show automatically related Research, Project, and Thesis entries when those entries reference the person's name.
+
 ## Quality Bar
 
 Keep the codebase maintainable enough to continue beyond the demo. Prefer typed, testable helpers over one-off parsing embedded in components. Add tests for content loading, schema validation, route derivation, and source-boundary behavior where regressions are plausible.

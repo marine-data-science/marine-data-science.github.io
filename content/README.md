@@ -462,6 +462,8 @@ Optional fields:
 
 Use `status` only for grouping topics into `Open`, `Ongoing`, and `Finished` sections. Use `keywords` for the blue pills shown in thesis teasers.
 
+When a name in `supervisors` or `contact` exactly matches a person title from `content/people/`, the website links the name automatically in metadata rows. The same matching is used to list related thesis topics, projects, and research topics at the bottom of local person detail pages.
+
 ## Before You Commit
 
 Check these points:
