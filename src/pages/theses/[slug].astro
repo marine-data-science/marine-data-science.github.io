@@ -15,7 +15,7 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const image = imageForEntry(entry);
 const summary = summaryForEntry(entry);
-const rows = await metadataRowsForEntry(entry);
+const rows = metadataRowsForEntry(entry);
 ---
 
 <BaseLayout title={entry.data.title} description={summary}>

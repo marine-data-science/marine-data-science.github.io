@@ -44,7 +44,7 @@ The content model uses item files as the source of truth:
 There are two different overview mechanisms:
 
 - Collection overview routes such as `/research/`, `/projects/`, `/people/`, `/teaching/`, and `/theses/` load their own `content/<collection>/index.mdx` for page-level copy, then list item files from the same collection.
-- The homepage loads `content/pages/home.mdx` for the hero and uses `home.mdx.sections` as a composition list. Each section entry points to a collection and may set `limit` to a number or `all`. The homepage then loads section title and description from that collection's `index.mdx` and item cards from the collection entries. The homepage thesis section treats a numeric `limit` as the target count after showing all `Open` thesis topics, then filling with `Ongoing` topics; `Finished` topics are excluded from the homepage.
+- The homepage loads `content/pages/home.mdx` for the hero and uses `home.mdx.sections` as a composition list. Each section entry points to a collection and may set `limit` to a number or `all`. The homepage then loads section title and description from that collection's `index.mdx` and item cards from the collection entries.
 
 The `sections` array is intentionally not an item-data array. It contains only collection references and display limits. Item metadata must remain in the item MDX files.
 
@@ -88,8 +88,6 @@ Standalone pages from `content/pages/*.mdx`, except `home.mdx`, may also be publ
 - Teaching: semester projects, teaching material, and summer schools are item files under `content/teaching/`.
 - Theses: every topic is an item file. Topics with full text use `detailPage: true`; list-only topics use `detailPage: false`. `status` groups topics on the Theses overview, while `keywords` provide the blue teaser pills.
 - Publications: grouped by year from `content/publications/index.mdx`; no individual publication pages are generated.
-
-Person names in `contact` and thesis `supervisors` fields are plain editorial strings. During rendering, matching names are resolved against `content/people/` and linked to the person's local detail page or external `detailPage` URL. Local person detail pages also show automatically related Research, Project, and Thesis entries when those entries reference the person's name.
 
 ## Quality Bar
 

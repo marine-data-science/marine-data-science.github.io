@@ -5,21 +5,16 @@ import matter from "gray-matter";
 import { CONTENT_ROOT, contentAssetUrl } from "../src/lib/paths";
 import {
   bodyForIndex,
-  getEntry,
   getIndex,
   getPeopleCards,
   getProjectCards,
-  getRelatedContentForPerson,
   getResearchCards,
   getStandalonePages,
   getTeachingCards,
   getThesisItems,
   groupThesisItems,
   hrefForDetailPage,
-  metadataRowsForEntry,
   pageSlugForEntry,
-  selectHomepageThesisItems,
-  type ThesisItem,
 } from "../src/lib/content";
 import { rewriteHref } from "../src/lib/routes";
 
@@ -79,68 +74,6 @@ describe("collection-backed overview content", () => {
     expect(theses.some((item) => item.title.includes("phytoplankton"))).toBe(true);
     expect(groups.map((group) => group.status)).toEqual(["Open", "Ongoing", "Finished"]);
     expect(theses.find((item) => item.title.includes("TabPFN"))?.keywords).toEqual(["microbiology"]);
-  });
-
-  it("selects open homepage thesis topics first and fills with ongoing topics only", async () => {
-    const theses = await getThesisItems();
-    const homepageTheses = selectHomepageThesisItems(theses, 4);
-
-    expect(homepageTheses).toHaveLength(4);
-    expect(homepageTheses.every((item) => item.status !== "Finished")).toBe(true);
-    expect(homepageTheses.filter((item) => item.status === "Open")).toEqual(
-      theses.filter((item) => item.status === "Open"),
-    );
-    expect(homepageTheses.map((item) => item.status)).toEqual(["Open", "Open", "Open", "Ongoing"]);
-  });
-
-  it("does not hide open homepage thesis topics when there are more than the target count", () => {
-    const items: ThesisItem[] = [
-      { title: "Open 1", status: "Open", href: "/1/", description: "", keywords: [] },
-      { title: "Open 2", status: "Open", href: "/2/", description: "", keywords: [] },
-      { title: "Ongoing 1", status: "Ongoing", href: "/3/", description: "", keywords: [] },
-      { title: "Finished 1", status: "Finished", href: "/4/", description: "", keywords: [] },
-    ];
-
-    expect(selectHomepageThesisItems(items, 1).map((item) => item.title)).toEqual(["Open 1", "Open 2"]);
-  });
-
-  it("links thesis supervisors to matching people detail targets", async () => {
-    const thesis = await getEntry("theses", "deep-learning-based-age-estimation-of-fish-from-otoliths");
-    expect(thesis).toBeDefined();
-
-    const rows = await metadataRowsForEntry(thesis!);
-    const supervisors = rows.find((row) => row.label === "Supervisors");
-
-    expect(supervisors?.values).toEqual([
-      { label: "Jan Meischner", href: "https://jmeischner.com" },
-    ]);
-  });
-
-  it("links project contacts to people even when apostrophe styles differ", async () => {
-    const project = await getEntry("projects", "data4sim");
-    expect(project).toBeDefined();
-
-    const rows = await metadataRowsForEntry(project!);
-    const contact = rows.find((row) => row.label === "Contact");
-
-    expect(contact?.values).toEqual([
-      { label: "Moh'd Khier Al Kfari", href: "/people/mohd/" },
-    ]);
-  });
-
-  it("collects related projects and thesis topics for people", async () => {
-    const daniel = await getEntry("people", "daniel-wulff");
-    const jan = await getEntry("people", "jan-meischner");
-    expect(daniel?.collection).toBe("people");
-    expect(jan?.collection).toBe("people");
-
-    const danielRelated = await getRelatedContentForPerson(daniel!);
-    const janRelated = await getRelatedContentForPerson(jan!);
-
-    expect(danielRelated.find((group) => group.title === "Projects")?.items.map((item) => item.title)).toEqual(["AI4Pumps"]);
-    expect(janRelated.find((group) => group.title === "Thesis Topics")?.items.map((item) => item.title)).toEqual([
-      "Deep learning-based age estimation of fish from otoliths",
-    ]);
   });
 
   it("does not rely on overview frontmatter item arrays", async () => {

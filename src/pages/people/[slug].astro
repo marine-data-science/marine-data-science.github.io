@@ -3,9 +3,8 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import ContentLink from "@components/ContentLink.astro";
 import MetadataRows from "@components/MetadataRows.astro";
 import PageIntro from "@components/PageIntro.astro";
-import RelatedContent from "@components/RelatedContent.astro";
 import { render } from "astro:content";
-import { getEntries, getRelatedContentForPerson, hasLocalDetailPage, imageForEntry, metadataRowsForEntry, slugForEntry, summaryForEntry } from "@lib/content";
+import { getEntries, hasLocalDetailPage, imageForEntry, metadataRowsForEntry, slugForEntry, summaryForEntry } from "@lib/content";
 
 export async function getStaticPaths() {
   const entries = await getEntries("people");
@@ -16,8 +15,7 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const image = imageForEntry(entry);
 const summary = summaryForEntry(entry);
-const rows = await metadataRowsForEntry(entry);
-const relatedContent = await getRelatedContentForPerson(entry);
+const rows = metadataRowsForEntry(entry);
 const intro = summary || rows.find((row) => row.label === "Role")?.value || "";
 ---
 
@@ -30,7 +28,6 @@ const intro = summary || rows.find((row) => row.label === "Role")?.value || "";
       <div class="prose">
         <Content components={{ a: ContentLink }} />
       </div>
-      <RelatedContent groups={relatedContent} />
     </article>
   </section>
 </BaseLayout>

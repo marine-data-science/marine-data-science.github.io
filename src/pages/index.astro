@@ -10,7 +10,6 @@ import {
   getResearchCards,
   getTeachingCards,
   getThesisItems,
-  selectHomepageThesisItems,
   sectionHeader,
   type Card,
   type HomeSectionConfig,
@@ -67,7 +66,7 @@ async function resolveHomeSection(config: HomeSectionConfig): Promise<ResolvedHo
       collection: config.collection,
       href,
       ...header,
-      theses: selectHomepageThesisItems(theses, config.limit),
+      theses: applyLimit(theses, config.limit),
     };
   }
 
