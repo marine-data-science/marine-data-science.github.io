@@ -44,6 +44,9 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          PUBLIC_SITE_URL: https://www.mds-lab.de
+          PUBLIC_BASE_PATH: /
         run: npm run build
 
       - name: Upload static site
