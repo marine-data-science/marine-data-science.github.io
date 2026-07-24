@@ -1,0 +1,55 @@
+---
+title: Spatial LLM Agents for Zero-Shot Visual Positioning
+sourceUrl: 'https://www.mds-lab.de/spatial-llm-agents-zero-shot-visual-positioning'
+lastModified: '2026-07-24'
+summary: >-
+  Feeding point cloud semantics directly into multimodal LLMs for abstract
+  spatial reasoning and zero-shot routing.
+order: 40
+detailPage: true
+status: Open
+keywords:
+  - Embodied AI
+contact: Ashwin Nedungadi
+---
+# Spatial LLM Agents for Zero-Shot Visual Positioning
+
+### Overview
+
+- Traditional robotic navigation relies on dense metric maps, pre-compiled navigation meshes, or classical graph-based Visual Positioning Systems (VPS).
+- Open-vocabulary 3D scene graphs have recently emerged, allowing robots to query environments semantically.
+- Pushing massive, unstructured point cloud data directly into multimodal Large Language Models to perform abstract spatial reasoning and zero-shot routing — without traditional pathfinding algorithms — remains largely unexplored.
+- This thesis bypasses navigation meshes by feeding point cloud semantics and spatial coordinates directly into multimodal LLMs (e.g., GPT-4V, LLaVA-3D).
+- The goal is an agent that interprets highly abstract human queries, grounds them in the provided spatial context, and outputs explicit, navigable routing paths across unstructured environments.
+
+### Objectives & Methodology
+
+- **Spatial representation:** Formulate an efficient tokenization or embedding strategy to represent large-scale 3D spatial data within LLM context windows.
+- **Zero-shot VPS:** Develop LangChain-based prompting mechanisms allowing the agent to deduce its location and plan a path from surrounding semantics.
+- **Benchmarking:** Evaluate the agent's point-to-point routing accuracy against classical metric-semantic baselines on open datasets.
+
+### Skills
+
+- Python programming experience with PyTorch
+- Experience with LLM / VLM APIs and agent frameworks (LangChain or similar)
+- Knowledge of 3D data structures and point cloud processing
+- Interest in robotic navigation and scene graphs
+
+### Tasks
+
+- Literature research on 3D-LLMs, scene graphs, and vision-and-language navigation
+- Design and implementation of the spatial tokenization / scene abstraction module
+- Implementation of the agentic routing pipeline
+- Quantitative benchmarking against classical navigation baselines
+
+### Core References
+
+1. Hong, Y., et al. (2023). "3D-LLM: Injecting the 3D World into Large Language Models." *NeurIPS*.
+2. Gu, J., et al. (2024). "ConceptGraphs: Open-Vocabulary 3D Scene Graphs for Perception and Planning." *ICRA*.
+3. Zhou, G., et al. (2023). "NavGPT: Explicit Reasoning in Vision-and-Language Navigation with Large Language Models." *arXiv*.
+
+### Contact
+
+Ashwin Nedungadi
+
+ashwin.nedungadi@uni-rostock.de

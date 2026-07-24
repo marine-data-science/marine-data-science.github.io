@@ -1,0 +1,58 @@
+---
+title: >-
+  RoboBIM-Sim: Semantically Articulated USD Environments from IFC Building
+  Models
+sourceUrl: 'https://www.mds-lab.de/robobim-sim-articulated-usd-from-ifc'
+lastModified: '2026-07-24'
+summary: >-
+  Automated IFC-to-USD pipeline producing physics-ready, semantically annotated
+  simulation environments for Embodied AI.
+order: 20
+detailPage: true
+status: Open
+keywords:
+  - Embodied AI
+contact: Ashwin Nedungadi
+---
+# RoboBIM-Sim: Semantically Articulated USD Environments from IFC Building Models
+
+### Overview
+
+- Embodied AI requires large-scale, semantically rich simulation environments to train robust navigation and manipulation policies.
+- Procedural generation and scanned datasets (e.g., [Habitat-Matterport](https://arxiv.org/abs/2109.08238)) are common, but lack the exact parametric data of real-world buildings.
+- Building Information Modeling (BIM) standards such as Industry Foundation Classes (IFC) contain exactly this ground-truth architectural data along with rich object semantics.
+- However, IFC models lack the physics, rendering materials, and joint articulations required by modern robotics simulators such as NVIDIA Isaac Sim, which relies on Universal Scene Description (USD).
+- This thesis bridges architectural BIM and Embodied AI: an automated pipeline ingests IFC building models and outputs semantically annotated, physics-ready USD scenes.
+- By mapping IFC property sets to USD physics and articulation properties (hinge joints for doors, prismatic joints for drawers, based on IFC classifications), robots can be injected with a *prior spatial memory* of a building's exact layout and interactive elements before deployment.
+
+### Objectives & Methodology
+
+- **Pipeline development:** Create a Python/C++ toolchain to parse IFC hierarchies and translate them into USD format.
+- **Automated articulation:** Extract semantic tags from IFC to automatically rig structural elements (doors, windows, cabinets) with correct physical joints in Isaac Sim.
+- **Validation:** Demonstrate a metric-semantic navigation and basic manipulation task in Isaac Sim using the injected architectural prior.
+
+### Skills
+
+- Python programming experience; C++ is a plus
+- Familiarity with 3D scene representations and geometry processing
+- Interest in robotics simulation (NVIDIA Isaac Sim / Isaac Lab, USD)
+- Basic knowledge of BIM/IFC is a plus but can be acquired during the thesis
+
+### Tasks
+
+- Literature research on BIM-to-simulation conversion and Embodied AI environments
+- Implementation of the IFC parsing and USD export toolchain
+- Automated joint/articulation rigging from IFC semantics
+- Evaluation of navigation and manipulation tasks in Isaac Sim
+
+### Core References
+
+1. Makoviychuk, V., et al. (2021). "Isaac Gym: High Performance GPU-Based Physics Simulation For Robot Learning." *NeurIPS Datasets and Benchmarks Track*. — Baseline for USD/physics simulation.
+2. Savva, M., et al. (2019). "Habitat: A Platform for Embodied AI Research." *ICCV*. — Context for Embodied AI simulation needs.
+3. Krijnen, T. F., & Beetz, J. (2017). "An IFC Open Source engine for 3D visualization, semantic querying and generation of building geometries." *W78 Conference*. — IFC parsing SOTA.
+
+### Contact
+
+Ashwin Nedungadi
+
+ashwin.nedungadi@uni-rostock.de

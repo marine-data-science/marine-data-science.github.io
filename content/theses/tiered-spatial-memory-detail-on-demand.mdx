@@ -1,0 +1,58 @@
+---
+title: 'Tiered Spatial Memory: Detail on Demand for Robotic Manipulation'
+sourceUrl: 'https://www.mds-lab.de/tiered-spatial-memory-detail-on-demand'
+lastModified: '2026-07-24'
+summary: >-
+  A hierarchical object graph that generates high-fidelity geometry only when a
+  manipulation task requires it.
+order: 50
+detailPage: true
+status: Open
+keywords:
+  - Embodied AI
+contact: Ashwin Nedungadi
+---
+# Tiered Spatial Memory: Detail on Demand for Robotic Manipulation
+
+### Overview
+
+- Current spatial memory in robotics forces a trade-off between fidelity and scalability.
+- "Always-on" generative reconstruction (e.g., SceneComplete, 2025) provides excellent geometry for grasping but incurs massive computational overhead, imagining geometry that never enters long-term memory as fact.
+- Fragment-based maps (e.g., DynaMem, 2024) are highly efficient and persist under change, but their incomplete geometry limits grasping stability.
+- Recent work such as Clio (2024) focuses on *which* objects to keep based on task relevance, but not *how much* detail to generate.
+- We propose a spatial memory structured as a hierarchical object graph where **geometric detail is produced when a task needs it, not when the object is first seen**.
+- At rest, the memory knows an object's gist, location, and likelihood of movement (enabling search and navigation, akin to DynaMem). When a task escalates to physical manipulation, the memory triggers an on-demand, single-moment 3D reconstruction from stored snapshots and active vision for the target object only, ensuring stable grasping (akin to SceneComplete) without the fleet-wide computational cost.
+- Fidelity becomes a property of the query, not of the storage.
+
+### Objectives & Methodology
+
+- **Hierarchical graph construction:** Build a spatial graph that persistently stores low-fidelity features (bounding boxes, semantics, timestamps).
+- **Generative task-triggering:** Implement a detail-on-demand module that synthesizes a high-fidelity 3D model (e.g., via NeRF or 3D Gaussian Splatting) only upon a manipulation query.
+- **Robotic validation:** Benchmark grasp stability and computational efficiency on a real or simulated robotic platform, comparing against DynaMem and SceneComplete baselines.
+
+### Skills
+
+- Python programming experience with PyTorch
+- Knowledge of 3D reconstruction (NeRF, 3D Gaussian Splatting) and open-vocabulary perception
+- Experience with ROS/ROS 2 or a robotics simulator is a plus
+- Interest in robotic grasping and manipulation
+
+### Tasks
+
+- Literature research on spatial memory, 3D scene graphs, and scene completion
+- Implementation of the hierarchical spatial memory representation
+- Integration of an on-demand reconstruction module and grasp planner
+- Benchmarking of grasp success rate and compute cost against SOTA baselines
+
+### Core References
+
+1. Agarwal, A., et al. [MIT] (2025). "SceneComplete: Open-World 3D Scene Completion in Cluttered Real World Environments for Robot Manipulation." *arXiv*.
+2. Liu, P., et al. (2024). "DynaMem: Online Dynamic Spatio-Semantic Memory for Open World Mobile Manipulation." *arXiv*.
+3. Maggio, V., et al. (2024). "Clio: Real-Time Task-Driven Open-Set 3D Scene Graphs." *IEEE Robotics and Automation Letters*.
+4. Gu, J., et al. (2024). "ConceptGraphs: Open-Vocabulary 3D Scene Graphs for Perception and Planning." *ICRA*.
+
+### Contact
+
+Ashwin Nedungadi
+
+ashwin.nedungadi@uni-rostock.de

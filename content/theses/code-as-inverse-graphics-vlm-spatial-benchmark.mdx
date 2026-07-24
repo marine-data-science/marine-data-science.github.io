@@ -1,0 +1,57 @@
+---
+title: >-
+  Code-as-Inverse-Graphics: Benchmarking Spatial Understanding in
+  Vision-Language Models
+sourceUrl: 'https://www.mds-lab.de/code-as-inverse-graphics-vlm-spatial-benchmark'
+lastModified: '2026-07-24'
+summary: >-
+  Benchmarking VLM spatial reasoning by tasking agents to reconstruct Blender
+  scenes as executable bpy code from images.
+order: 60
+detailPage: true
+status: Open
+keywords:
+  - Computer Vision
+contact: Ashwin Nedungadi
+---
+# Code-as-Inverse-Graphics: Benchmarking Spatial Understanding in Vision-Language Models
+
+### Overview
+
+- State-of-the-art Vision-Language Models and LLMs can generate procedural 3D scenes via Blender Python scripts (`bpy`).
+- However, these models appear to lack true, grounded spatial understanding of the scenes they create, failing dramatically when asked to execute iterative spatial edits.
+- Text-to-3D benchmarks exist, but a rigorous test of a VLM's ability to map visual spatial layouts back into precise mathematical/procedural logic is missing.
+- This thesis inverts the generative paradigm to benchmark spatial intelligence: LLM agents must replicate existing Blender scenes *purely* through visual inspection (orthogonal, perspective, and RGB-D projections) by generating the underlying `bpy` code.
+- This "Code-as-Inverse-Graphics" formulation forces the model to demonstrate metric and topological reasoning, providing a strict benchmark for spatial capabilities.
+
+### Objectives & Methodology
+
+- **Evaluation framework:** Develop an automated pipeline that generates random procedural 3D scenes in Blender and extracts multi-view visual representations.
+- **Closed-loop reasoning:** Design an agentic pipeline in which the LLM receives the visual inputs and iteratively generates and refines Blender Python code to reconstruct the scene.
+- **Benchmarking:** Evaluate current SOTA models (e.g., GPT-4o, Claude, open-source VLMs) on reconstruction accuracy using 3D IoU and visual similarity metrics.
+
+### Skills
+
+- Python programming experience
+- Familiarity with Blender and its Python API (`bpy`), or willingness to learn
+- Experience with VLM / LLM APIs and agentic prompting
+- Basic knowledge of 3D geometry and rendering
+
+### Tasks
+
+- Literature research on spatial reasoning benchmarks for VLMs and inverse graphics
+- Implementation of the procedural scene generator and multi-view rendering pipeline
+- Implementation of the closed-loop agentic code-generation framework
+- Design of evaluation metrics and benchmarking of SOTA models
+
+### Core References
+
+1. Chen, Y., et al. (2024). "SpatialVLM: Endowing Vision-Language Models with Spatial Reasoning Capabilities." *CVPR*.
+2. Liu, F., et al. (2023). "LL3M: Large Language and Vision Models for 3D Understanding." *arXiv*.
+3. Wu, J., et al. (2015). "Galileo: Perceiving Physical Object Properties by Integrating a Physics Engine with Deep Learning." *NeurIPS*. — Classic context for inverse graphics reasoning.
+
+### Contact
+
+Ashwin Nedungadi
+
+ashwin.nedungadi@uni-rostock.de

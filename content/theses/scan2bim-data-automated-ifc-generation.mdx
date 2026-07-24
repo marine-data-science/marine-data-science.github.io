@@ -1,0 +1,55 @@
+---
+title: 'Scan2BIM-Data: Automated IFC Generation for Text-to-BIM'
+sourceUrl: 'https://www.mds-lab.de/scan2bim-data-automated-ifc-generation'
+lastModified: '2026-07-24'
+summary: >-
+  3D semantic segmentation and primitive fitting to convert point clouds into
+  parametric IFC datasets for Text-to-BIM.
+order: 30
+detailPage: true
+status: Open
+keywords:
+  - Computer Vision
+contact: Ashwin Nedungadi
+---
+# Scan2BIM-Data: Automated IFC Generation for Text-to-BIM
+
+### Overview
+
+- The generative AI revolution (Text-to-Image, Text-to-3D) is rapidly approaching the architectural domain.
+- Text-to-BIM — generating parametric building models from prompts — is severely bottlenecked by data scarcity: there is no large-scale dataset pairing natural language with parametric IFC building structures.
+- Massive 3D point cloud datasets exist ([ScanNet](https://arxiv.org/abs/1702.04405), Matterport3D), but converting these unstructured geometric representations into structured, parametric architectural entities remains an open challenge in 3D computer vision.
+- This thesis addresses the generative architecture data bottleneck by automating the conversion of unstructured 3D point clouds into parametric IFC datasets.
+- Leveraging SOTA 3D semantic segmentation and geometric primitive fitting, the student builds a pipeline that extracts structural elements and exports them as IFC files, paving the way for open-source Text-to-BIM foundation models.
+
+### Objectives & Methodology
+
+- **Semantic extraction:** Use 3D vision models (e.g., PointGroup, Mask3D) to segment walls, floors, ceilings, and large furniture from point clouds.
+- **Parametric fitting:** Fit geometric primitives to segmented point clusters and translate them into standard IFC classes (e.g., `IfcWall`, `IfcSlab`).
+- **Dataset generation:** Generate a paired dataset of spatial descriptions and IFC files, and evaluate its viability for fine-tuning an LLM on simple Text-to-BIM tasks.
+
+### Skills
+
+- Python programming experience with PyTorch, NumPy, and Open3D
+- Deep learning knowledge, especially 3D point cloud networks (sparse convolutions, transformers)
+- Geometry processing and 3D data handling
+- Interest in generative models / LLM fine-tuning is a plus
+
+### Tasks
+
+- Literature research on Scan-to-BIM and 3D semantic segmentation
+- Data preparation and preprocessing of large-scale indoor point cloud datasets
+- Implementation and training/evaluation of the segmentation and primitive-fitting pipeline
+- IFC export and construction of the paired language–IFC dataset
+
+### Core References
+
+1. Bavishi, R., et al. [Meta Reality Labs] (2024). "SceneScript: Reconstructing Scenes with an Autoregressive Generative Model." *arXiv*. — SOTA in language-driven structural reconstruction.
+2. Dai, A., et al. (2017). "ScanNet: Richly-annotated 3D Reconstructions of Indoor Scenes." *CVPR*. — Primary dataset source.
+3. Schickert, M., et al. (2023). "Automated Scan-to-BIM: A review of current techniques and future directions." *Automation in Construction*.
+
+### Contact
+
+Ashwin Nedungadi
+
+ashwin.nedungadi@uni-rostock.de
