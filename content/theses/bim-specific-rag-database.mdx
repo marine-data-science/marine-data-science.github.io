@@ -1,0 +1,51 @@
+---
+title: BIM-RAG for LLM-Based Building Design
+lastModified: '2026-07-30'
+summary: >-
+  Building a searchable database of BIM components, standards, and code
+  documentation, and testing whether retrieval improves LLM-based BIM editing.
+order: 35
+detailPage: true
+status: Open
+keywords:
+  - Information Retrieval
+  - BIM
+contact: Bharathi Kannan N.
+---
+# A BIM-Specific RAG Database for LLM-Based Building Design
+
+### Overview
+
+- Current LLMs struggle with BIM editing and generation. They understand IFC terms, but often miss the exact entity definitions, property sets, naming rules, and APIs needed to create valid models.
+- They need the right information at the right time, such as BIM best practices, reference components, building standards, regulations, and API documentation.
+- **Goal**: Build a BIM-specific RAG system that provides this information to the LLM through document search or callable tools.
+
+### Tasks
+
+1. Collect and study BIM data, such as components, properties, standards, regulations, and code documentation.
+2. Store the data in a suitable database, such as a vector database.
+3. Develop retrieval tools and connect them to an LLM.
+4. Compare different retrieval methods.
+5. Test whether the retrieved information improves LLM-based BIM tasks.
+6. Open to exploring further directions.
+
+### Expected Outcome
+
+* A searchable RAG database for BIM components and documents.
+* A pipeline that connects the database to an LLM.
+
+### Context
+
+The topic connects to our work on [tool use in large language models](/research/tool-use-in-llms/) and to the [Show2Instruct](/projects/show2instruct/) project, where an LLM edits IFC models through an MCP-based tool server. The retrieval system built here is can be used to plug into that setup.
+
+### Core References
+
+1. Nithyanantham, B. K., et al. (2025). "MCP4IFC: IFC-Based Building Design Using Large Language Models." *arXiv preprint arXiv:2511.05533*. [[web]](https://arxiv.org/abs/2511.05533)
+2. Lewis, P., et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks." *NeurIPS*.
+3. [IfcOpenShell](https://ifcopenshell.org/), the open source IFC toolkit and geometry engine.
+
+### Contact
+
+[Bharathi Kannan N.](/people/bharathi/)
+
+bharathikannan.nithyanantham@uni-rostock.de

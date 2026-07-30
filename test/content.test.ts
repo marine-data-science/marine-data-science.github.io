@@ -128,6 +128,24 @@ describe("collection-backed overview content", () => {
     ]);
   });
 
+  it("links contacts written as a person name alias and keeps the written form", async () => {
+    const research = await getEntry("research", "tool-use-in-llms");
+    expect(research).toBeDefined();
+
+    const contact = (await metadataRowsForEntry(research!)).find((row) => row.label === "Contact");
+    expect(contact?.values).toEqual([{ label: "Bharathi Kannan N.", href: "/people/bharathi/" }]);
+
+    const bharathi = await getEntry("people", "bharathi");
+    const related = await getRelatedContentForPerson(bharathi!);
+
+    expect(related.find((group) => group.title === "Research Topics")?.items.map((item) => item.title)).toEqual([
+      "Tool Use in Large Language Models",
+    ]);
+    expect(related.find((group) => group.title === "Projects")?.items.map((item) => item.title)).toEqual([
+      "Show2Instruct",
+    ]);
+  });
+
   it("collects related projects and thesis topics for people", async () => {
     const daniel = await getEntry("people", "daniel-wulff");
     const jan = await getEntry("people", "jan-meischner");

@@ -1,0 +1,40 @@
+---
+title: Tool Use in Large Language Models
+lastModified: '2026-07-30'
+summary: >-
+  Methods that let language models call external tools reliably, from function
+  calling and MCP to agents that act on real software systems.
+image: ../assets/research/tool-use-in-llms/tool_use_banner.jpg
+imageAlt: >-
+  An LLM conversation in which the model calls IFC tools such as
+  create_two_point_wall and create_slab to build a room, next to the tool
+  registry, the execution flow, and the resulting IFC model
+contact: Bharathi Kannan N.
+order: 25
+detailPage: true
+tags:
+  - large language models
+  - tool use
+  - agents
+---
+# Tool Use in Large Language Models
+
+A language model alone has several limits. Its knowledge is fixed after training, it cannot access private files, databases, or live information, and it cannot directly interact with software. **Tool use** helps overcome these limits. A model can select a tool, provide structured inputs, receive the result, and continue based on real information. This allows models to search data, execute code, call APIs, and operate external applications.
+
+The **Model Context Protocol (MCP)** provides a standard way to connect language models with tools, data sources, APIs, and software. MCP servers expose the functions of an application in a form that models can understand and use. Tool use can then be extended into **LLM agents**, which plan tasks, use several tools, observe results, detect errors, and repeat actions until the goal is completed.
+
+Our research explores how tool use and agentic workflows can improve software automation, especially in **BIM and CAD**. We design better tools, adapt them to specific applications, and build MCP servers for different software systems. We also study how systems can move from simple tool calls to complete agentic workflows with planning, memory, tool selection, and error recovery.
+
+We also study the code generation and tool-use abilities of LLMs. We develop benchmarks to test whether models can select the correct tools, complete multi-step tasks, and produce accurate final results.
+ 
+### Key Publications
+
+Bharathi Kannan Nithyanantham, Tobias Sesterhenn, Ashwin Nedungadi, Sergio Peral Garijo, Janis Zenkner, Christian Bartelt, Stefan Lüdtke. MCP4IFC: IFC-Based Building Design Using Large Language Models. **arXiv preprint arXiv:2511.05533**. 2025. [[web]](https://arxiv.org/abs/2511.05533)
+
+Bharathi Kannan Nithyanantham, Clemens Kujat, Tobias Sesterhenn, Stefan Telgmann, Ashwin Nedungadi, Jörn Plönnigs, Christian Bartelt, Stefan Lüdtke. BIM-Edit: Benchmarking Large Language Models for IFC-Based Building Information Modeling. **arXiv preprint arXiv:2606.20146**. 2026. [[web]](https://arxiv.org/abs/2606.20146)
+
+https://show2instruct.github.io/ifc-copilot/
+
+### Contact
+
+[Bharathi Kannan N.](/people/bharathi/)

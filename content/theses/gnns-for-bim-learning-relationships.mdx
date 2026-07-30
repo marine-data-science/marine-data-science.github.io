@@ -1,0 +1,47 @@
+---
+title: 'GNNs for BIM: Learning Relationships in IFC Models'
+lastModified: '2026-07-30'
+summary: >-
+  Learning the recurring relationships between objects in valid IFC models with
+  graph neural networks.
+order: 25
+detailPage: true
+status: Open
+keywords:
+  - Graph Learning
+  - BIM
+contact: Bharathi Kannan N.
+---
+# GNNs for BIM: Learning Relationships in IFC Models
+
+### Overview
+
+- BIM is CAD plus semantics, and those semantics include properties, topology, and the links between objects. A graph structure is therefore inherent in every BIM model: a window sits in a wall, a storey holds a space, parts share a type or material, and the same patterns repeat across valid models.
+- **Goal**: develop an IFC-to-graph pipeline and train a graph neural network that learns these patterns and predicts the relationships in models it has not seen.
+- Common patterns learned from IFC files are valuable for many downstream tasks, such as completing missing links, checking model quality, classifying elements, and searching across building models. Finding and testing such applications is part of the thesis.
+
+### Tasks
+
+1. Collect valid IFC models from open datasets and project data.
+2. Develop an IFC-to-graph pipeline that converts models into graphs, per building, per floor, etc.
+3. Train a GNN to predict how objects are related, for example with link prediction or a graph autoencoder.
+4. Test it on new models and check which relationships it learns well.
+5. Find downstream applications where the learned patterns help, and try one of them.
+
+### Expected Outcome
+
+- A library that converts IFC models into graphs.
+- A dataset of IFC graphs.
+- Baseline GNN models for relationship learning.
+
+### Core References
+
+1. Austern, G.; Bloch, T.; Abulafia, Y. (2024). "Incorporating Context into BIM-Derived Data: Leveraging Graph Neural Networks for Building Element Classification." *Buildings*, 14, 527. [https://doi.org/10.3390/buildings14020527](https://doi.org/10.3390/buildings14020527)
+2. Wang, Z., & Ying, H. (2025). "Graph representation learning: Embedding Multimodality BIM models into graphs." *European Conference on Computing in Construction*.
+3. [topologicpy](https://pypi.org/project/topologicpy/), topology and graph handling for building models.
+
+### Contact
+
+[Bharathi Kannan N.](/people/bharathi/)
+
+bharathikannan.nithyanantham@uni-rostock.de

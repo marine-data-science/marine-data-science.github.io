@@ -418,7 +418,7 @@ export async function getRelatedContentForPerson(
     return [];
   }
 
-  const name = person.data.title;
+  const name = personNamesForPerson(person);
   const groups: RelatedContentGroup[] = [];
 
   const research = (await getEntries("research")) as CollectionEntry<"research">[];
@@ -585,19 +585,25 @@ function linkedPeopleRow(
 async function getPeopleLinkIndex(): Promise<Map<string, MetadataValue>> {
   const entries = (await getEntries("people")) as CollectionEntry<"people">[];
   return new Map(
-    entries.map((entry) => [
-      normalizePersonName(entry.data.title),
-      {
-        label: entry.data.title,
-        href: hrefForEntry("people", entry),
-      },
-    ]),
+    entries.flatMap((entry) => {
+      const href = hrefForEntry("people", entry);
+      return personNamesForPerson(entry).map(
+        (name): [string, MetadataValue] => [
+          normalizePersonName(name),
+          { label: name, href },
+        ],
+      );
+    }),
   );
 }
 
-function namesContainPerson(value: string | string[] | undefined, name: string): boolean {
-  const normalizedName = normalizePersonName(name);
-  return personNames(value).some((candidate) => normalizePersonName(candidate) === normalizedName);
+function namesContainPerson(value: string | string[] | undefined, names: string[]): boolean {
+  const normalizedNames = new Set(names.map(normalizePersonName));
+  return personNames(value).some((candidate) => normalizedNames.has(normalizePersonName(candidate)));
+}
+
+function personNamesForPerson(person: CollectionEntry<"people">): string[] {
+  return [person.data.title, ...person.data.aliases];
 }
 
 function personNames(value: string | string[] | undefined): string[] {

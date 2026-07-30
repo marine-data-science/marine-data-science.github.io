@@ -46,6 +46,7 @@ const people = defineCollection({
     address: z.string().optional(),
     email: z.string().email().optional(),
     group: z.string().optional(),
+    aliases: z.array(z.string()).optional().default([]),
     alumni: z.boolean().optional().default(false),
   }),
 });
