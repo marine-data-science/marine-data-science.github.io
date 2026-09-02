@@ -1,0 +1,69 @@
+---
+title: Learning Representations for Spatial Intelligence (LeReSI)
+sourceUrl: 'https://www.mds-lab.de/spatialbim2026'
+lastModified: '2026-09-02'
+summary: Winter semester group project on spatial intelligence from 3D building models for robots and LLM agents.
+order: 10
+detailPage: true
+tags:
+  - Spatial intelligence
+  - Embodied AI
+  - Building Information Modeling
+  - Large Language Models
+kind: Semester project
+semester: Winter Semester 2026
+---
+
+### Why this project
+
+Recent foundation models understand language and recognize objects well, but they are weak at spatial structure: which room is next to which, how to get from one place to another, whether a layout makes sense. Robots meet the same problem from the other side. To navigate or manipulate in a building they need a spatial memory that goes beyond what their sensors currently see.
+
+3D building models already contain much of this information. In Building Information Modeling (BIM), a building is stored in the IFC format with its rooms, doors and walls, their relationships, and a hierarchy from site to building, storey and room. Seen as a graph, rooms are nodes and doors and passages are edges, and buildings follow recurring patterns: bathrooms open onto corridors, kitchens connect to living rooms, an apartment has one main entrance. A graph extracted from a building model makes this structure explicit, and an LLM can reason over it. Exposed as a tool, that reasoning can be called by an LLM whenever it needs it.
+
+In robotics, 3D scene graphs have become the standard spatial memory, but they are built online from sensors and are incomplete by nature; the building model is a prior that could complete them. On the LLM side, agents can now call tools and text-to-BIM systems exist, but they have little explicit spatial reasoning. Whether structure from the building model helps in either setting, and which method gets it there best, is open. That is what you will find out.
+
+### What you will do
+
+You will work with real 3D building models in IFC format. Extract 2D and 3D representations such as floorplans, graphs or other relevant information, enrich it using LLMs, GNNs, rules, or another suitable method, and apply it to your team’s application. Since real models are often incomplete, for example, rooms may be unnamed or doors may not be linked to rooms, semantic enrichment is an important part of the project. The tasks listed for each team are suggestions; choose one that matches your interests or propose your own within the theme.
+
+### Team 1: Embodied AI / Robotics
+
+Use building graphs, floor plans, and other spatial representations as spatial memory for an agent navigating a building.
+
+- Metric-semantic graphs: Preserve relevant information such as positions, distances, door widths, and traversability while removing non-physical data. The resulting graph can support the agent’s online scene graph.
+- Completing partially observed buildings: Simulate an agent that has explored only part of a building. Predict missing room types, hidden doors, and navigation affordances using LLMs, GNNs, rules, or a combination of methods, and compare their performance.
+- Spatial question answering: Answer questions such as, “How do I get from the kitchen to the bathroom?” or “Which rooms are reachable from the entrance without passing through the living room?” The LLM can delegate structural queries to graph tools through MCP.
+- Evaluation: Compare building completion and spatial question answering with and without the developed pipeline across different model settings.
+
+### Team 2: LLM Tools and Generative Text-to-BIM
+
+Use existing IFC models to extract floor plans, graphs, room relationships, and common layout patterns. Then investigate whether these patterns can help an LLM check, edit, or generate new building layouts.
+
+- Pattern extraction: Extract common room types, dimensions, connections, circulation patterns, and spatial relationships from existing IFC models.
+- Retrieval: Given a new task, retrieve similar floor plans or building graphs from previous projects and provide them to the LLM as examples.
+- MCP tools: Develop tools for IFC extraction, graph queries, rule checking, and trained models with which the LLM can interact through.
+- Precedent-based generation: Ask the LLM to generate a new layout using patterns learned or retrieved from previous buildings.
+- Evaluation: Develop a small benchmark and compare the same LLM in two settings: with and without the developed tools. 
+
+### What You Will Learn
+- How to do original research under mentorship from PhDs
+- How to work with LLMs and build LLM-based projects.
+- How to work with 3D building models and structured information.
+- How to perform spatial and multimodal reasoning.
+- How to develop, compare, and evaluate different methods.
+
+
+### Requirements
+- Take this course as part of the Project module in Master's CS International or NEidI.
+- Familiarity with Python; experience with PyTorch, graph libraries or LLM APIs is a plus.
+- No prior BIM knowledge required.
+
+
+### References
+1. Paudel, A., Dhakal, R., and Bhattarai, S. (2021). "Room classification on floor plan graphs using graph neural networks." arXiv:2108.05947.
+2. Wang et al. (2022). "Exploring graph neural networks for semantic enrichment: Room type classification." Automation in Construction.
+3. Van Engelenburg, C., et al. (2024). "MSD: A benchmark dataset for floor plan generation of building complexes." ECCV.
+4. Rana, K., et al. (2023). "SayPlan: Grounding Large Language Models using 3D Scene Graphs for Scalable Robot Task Planning." CoRL.
+5. "BIM Information Extraction Through LLM-based Adaptive Exploration." (2026). arXiv:2605.01698.
+6. Du, C., Esser, S., Nousias, S., and Borrmann, A. (2024). "Text2BIM: Generating Building Models Using a Large Language Model-based Multi-Agent Framework." arXiv:2408.08054.
+
