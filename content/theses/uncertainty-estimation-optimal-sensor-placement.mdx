@@ -1,0 +1,34 @@
+---
+title: >-
+  Exploring Uncertainty Estimation Methods for Optimal Sensor Placement
+sourceUrl: 'https://www.mds-lab.de/uncertainty-estimation-optimal-sensor-placement'
+lastModified: '2026-09-23'
+summary: >-
+  Evaluating uncertainty estimation methods for Convolutional Conditional Neural Processes in the context of optimal sensor placement
+order: 60
+detailPage: true
+status: Open
+keywords:
+  - Optimal Sensor Placement
+  - Uncertainty Quantification
+contact: Stefan Lüdtke
+---
+# Exploring Uncertainty Estimation Methods for Optimal Sensor Placement
+
+### Overview
+
+Where should we place a limited number of sensors to reconstruct an environmental field, such as sea surface temperature, as accurately as possible? Convolutional Conditional Neural Processes (ConvCNPs) are scalable models for spatial prediction from sparse observations and can guide sensor placement by selecting locations that maximally reduce predictive uncertainty. However, standard variance-based criteria conflate observation noise (aleatoric uncertainty) with uncertainty about the underlying field (epistemic uncertainty). Recent work (Eksen et al., 2026) showed that acquisition functions targeting epistemic uncertainty lead to more informative sensor placements.
+
+In this thesis, you will explore Bayesian neural network approaches to estimating epistemic uncertainty in ConvCNPs and use them for sensor placement. You will start with a Bayesian last layer as a simple, efficient variant, then extend it to mean-field variational inference, likely implemented in NumPyro. These approaches will be compared against baselines such as MC dropout and deep ensembles. Evaluation will follow the setup of Eksen et al. (2026), using sparse image reconstruction on MNIST and sensor placement on Baltic Sea surface temperature reanalysis data.
+
+
+### References
+
+Eksen, F., Oehmcke, S., & Lüdtke, S. (2026). Sensor Placement with Neural Processes by Mixture Component Disagreement. In Joint European Conference on Machine Learning and Knowledge Discovery in Databases (pp. 299-315). Cham: Springer Nature Switzerland.
+
+
+### Contact
+
+Stefan Lüdtke
+
+stefan.luedtke@uni-rostock.de
